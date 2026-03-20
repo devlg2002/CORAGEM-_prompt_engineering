@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas Acadêmico — Método Coragem™ v2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0a0a0f;
+      --paper: #f5f0e8;
+      --primary: #1a1040;
+      --gold: #c8963e;
+      --gold-light: #e8c068;
+      --rust: #8b3a2a;
+      --slate: #3d4a5c;
+      --mist: #e8e2d6;
+      --white: #faf7f2;
+      --accent-blue: #1e3a5f;
+      --accent-teal: #1a4a4a;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--paper);
+      color: var(--ink);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* ── HERO ─────────────────────────────────────────────── */
+    .hero {
+      background-color: var(--primary);
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(200,150,62,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(30,58,95,0.5) 0%, transparent 50%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 39px,
+          rgba(255,255,255,0.025) 39px,
+          rgba(255,255,255,0.025) 40px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 39px,
+          rgba(255,255,255,0.025) 39px,
+          rgba(255,255,255,0.025) 40px
+        );
+      color: var(--white);
+      padding: 80px 40px 70px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at center bottom, rgba(200,150,62,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+
+    .hero-sub {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 300;
+      color: rgba(250,247,242,0.65);
+      margin-bottom: 32px;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-meta {
+      display: inline-flex;
+      gap: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: rgba(250,247,242,0.4);
+      letter-spacing: 0.12em;
+      border-top: 1px solid rgba(200,150,62,0.2);
+      padding-top: 24px;
+      margin-top: 8px;
+    }
+
+    /* ── LAYOUT ────────────────────────────────────────────── */
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ── INTRO BAND ────────────────────────────────────────── */
+    .intro-band {
+      background: var(--white);
+      border-bottom: 1px solid var(--mist);
+      padding: 56px 0;
+    }
+
+    .intro-band p {
+      font-size: 1.1rem;
+      color: var(--slate);
+      max-width: 720px;
+      text-align: justify;
+      margin-bottom: 1em;
+    }
+
+    .intro-band p:last-child { margin-bottom: 0; }
+
+    /* ── SECTION COMMON ────────────────────────────────────── */
+    .section {
+      padding: 64px 0;
+      border-bottom: 1px solid var(--mist);
+    }
+
+    .section:last-child { border-bottom: none; }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .layer-badge {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+    }
+
+    .layer-badge .num {
+      font-size: 1.3rem;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .layer-badge .tag {
+      font-size: 0.52rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 4px;
+      opacity: 0.7;
+    }
+
+    /* Badge colors per layer */
+    .badge-1 { background: var(--primary); color: var(--gold-light); }
+    .badge-2 { background: var(--accent-blue); color: #a8cce8; }
+    .badge-3 { background: var(--rust); color: #f0c8a0; }
+    .badge-4 { background: var(--accent-teal); color: #a0d4c8; }
+    .badge-5 { background: #3a2060; color: #c8a8f0; }
+    .badge-6 { background: #1a3a1a; color: #a8d4a0; }
+    .badge-7 { background: #2a1a0a; color: #e8c888; }
+    .badge-8 { background: #0a1a2a; color: #80c0e0; }
+
+    .section-title-block h2 {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .section-title-block .layer-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .section-title-block .layer-nature {
+      font-size: 0.82rem;
+      color: var(--slate);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    /* ── PROSE ─────────────────────────────────────────────── */
+    .prose p {
+      text-align: justify;
+      color: #2a2a3a;
+      margin-bottom: 1.1em;
+    }
+
+    .prose p:last-child { margin-bottom: 0; }
+
+    /* ── CARDS ─────────────────────────────────────────────── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin: 28px 0;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--mist);
+      border-radius: 4px;
+      padding: 24px;
+      position: relative;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .card-gold::before { background: var(--gold); }
+    .card-blue::before { background: var(--accent-blue); }
+    .card-teal::before { background: var(--accent-teal); }
+    .card-rust::before { background: var(--rust); }
+    .card-violet::before { background: #6a40a0; }
+
+    .card h4 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--slate);
+      text-align: justify;
+    }
+
+    .card ul {
+      font-size: 0.88rem;
+      color: var(--slate);
+      padding-left: 18px;
+      margin-top: 8px;
+    }
+
+    .card li { margin-bottom: 5px; }
+
+    /* ── DEFINITION BOX ────────────────────────────────────── */
+    .def-box {
+      background: var(--primary);
+      color: var(--white);
+      padding: 28px 32px;
+      border-radius: 4px;
+      margin: 28px 0;
+      position: relative;
+    }
+
+    .def-box::before {
+      content: '❝';
+      position: absolute;
+      top: 12px; left: 20px;
+      font-size: 2.5rem;
+      color: var(--gold);
+      opacity: 0.4;
+      line-height: 1;
+    }
+
+    .def-box p {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-style: italic;
+      line-height: 1.6;
+      padding-left: 12px;
+      color: rgba(250,247,242,0.92);
+    }
+
+    .def-box .def-source {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      margin-top: 12px;
+      padding-left: 12px;
+      text-transform: uppercase;
+    }
+
+    /* ── PARAMS DISPLAY ────────────────────────────────────── */
+    .param-example {
+      background: #f0ede6;
+      border-left: 4px solid var(--gold);
+      padding: 14px 20px;
+      margin: 10px 0;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--ink);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .param-example::before {
+      content: '→ ';
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    /* ── TABLE ─────────────────────────────────────────────── */
+    .academic-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-size: 0.88rem;
+    }
+
+    .academic-table thead tr {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .academic-table th, .academic-table td {
+      padding: 13px 16px;
+      text-align: left;
+      border: 1px solid var(--mist);
+    }
+
+    .academic-table tbody tr:nth-child(even) { background: var(--white); }
+    .academic-table tbody tr:nth-child(odd) { background: var(--paper); }
+
+    .academic-table td:first-child {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    /* ── HIGHLIGHT TERM ────────────────────────────────────── */
+    .ht {
+      background: rgba(200,150,62,0.12);
+      color: var(--primary);
+      padding: 1px 7px;
+      border-radius: 3px;
+      font-weight: 600;
+      font-family: var(--font-display);
+      font-size: 0.95em;
+    }
+
+    /* ── DIAGRAM ───────────────────────────────────────────── */
+    .arch-diagram {
+      background: #0d1117;
+      border-radius: 6px;
+      padding: 32px;
+      margin: 36px 0;
+      font-family: var(--font-mono);
+      overflow-x: auto;
+      border: 1px solid #1a2030;
+    }
+
+    .arch-diagram pre {
+      color: #c9d1d9;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      white-space: pre;
+    }
+
+    .arch-line-gold { color: #e8c068; }
+    .arch-line-blue { color: #79c0ff; }
+    .arch-line-green { color: #7ee787; }
+    .arch-line-purple { color: #d2a8ff; }
+    .arch-line-red { color: #ffa198; }
+    .arch-line-cyan { color: #56d0e8; }
+    .arch-line-dim { color: #484f58; }
+
+    /* ── PILLAR COLUMNS ────────────────────────────────────── */
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--mist);
+      border: 1px solid var(--mist);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 28px 0;
+    }
+
+    .pillar {
+      background: var(--white);
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .pillar-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .pillar h5 {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .pillar p {
+      font-size: 0.82rem;
+      color: var(--slate);
+    }
+
+    /* ── CONSTRUCTS GRID ───────────────────────────────────── */
+    .construct-block {
+      background: var(--white);
+      border: 1px solid var(--mist);
+      border-radius: 4px;
+      padding: 22px 24px;
+      margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .construct-label {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .construct-desc {
+      font-size: 0.88rem;
+      color: var(--slate);
+      text-align: justify;
+    }
+
+    /* ── CONCLUSION ────────────────────────────────────────── */
+    .conclusion {
+      background: var(--primary);
+      background-image:
+        radial-gradient(ellipse at 0% 100%, rgba(200,150,62,0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 0%, rgba(100,60,200,0.1) 0%, transparent 50%);
+      color: var(--white);
+      padding: 72px 0;
+    }
+
+    .conclusion h2 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .conclusion h2 span { color: var(--gold-light); }
+
+    .paradigm-shift {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 20px;
+      align-items: center;
+      margin: 40px 0;
+    }
+
+    .shift-from, .shift-to {
+      padding: 24px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .shift-from {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .shift-to {
+      background: rgba(200,150,62,0.15);
+      border: 1px solid rgba(200,150,62,0.3);
+    }
+
+    .shift-from h5, .shift-to h5 {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-bottom: 8px;
+    }
+
+    .shift-from p, .shift-to p {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-style: italic;
+    }
+
+    .shift-arrow {
+      font-size: 2rem;
+      color: var(--gold);
+      text-align: center;
+    }
+
+    .conclusion .prose p {
+      color: rgba(250,247,242,0.8);
+      text-align: center;
+    }
+
+    .control-levels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .ctrl-level {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 22px 18px;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .ctrl-level .ctrl-icon { font-size: 1.5rem; margin-bottom: 10px; display: block; }
+    .ctrl-level h5 {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+    .ctrl-level p { font-size: 0.8rem; color: rgba(250,247,242,0.6); }
+
+    /* ── FOOTER ────────────────────────────────────────────── */
+    .footer {
+      background: #06060a;
+      padding: 32px 0;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: rgba(200,200,200,0.3);
+      letter-spacing: 0.1em;
+    }
+
+    .footer span { color: var(--gold); opacity: 0.7; }
+
+    /* ── DIVIDER ───────────────────────────────────────────── */
+    .ornament {
+      text-align: center;
+      color: var(--gold);
+      opacity: 0.4;
+      font-size: 1.2rem;
+      margin: 32px 0 8px;
+      letter-spacing: 0.5em;
+    }
+
+    /* ── FORMULA BOX ───────────────────────────────────────── */
+    .formula-box {
+      background: #faf7f2;
+      border: 1px solid var(--mist);
+      border-radius: 4px;
+      padding: 24px 32px;
+      text-align: center;
+      margin: 24px 0;
+      position: relative;
+    }
+
+    .formula-box::before {
+      content: 'FÓRMULA ESTRUTURAL';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--paper);
+      padding: 0 12px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+    }
+
+    .formula-box .formula {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-style: italic;
+      color: var(--primary);
+      line-height: 1.8;
+    }
+
+    .formula-box .formula strong {
+      font-style: normal;
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    /* section backgrounds alternation */
+    .bg-white { background: var(--white); }
+    .bg-paper { background: var(--paper); }
+
+    @media (max-width: 640px) {
+      .pillars { grid-template-columns: 1fr; }
+      .control-levels { grid-template-columns: 1fr; }
+      .paradigm-shift { grid-template-columns: 1fr; }
+      .shift-arrow { transform: rotate(90deg); }
+      .construct-block { grid-template-columns: 1fr; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-eyebrow">Canvas Acadêmico · Projeto Pessoal · v2.0</div>
+  <h1>
+    <em>Método Coragem™</em><br>
+    Arquitetura de Condicionamento<br>Cognitivo para LLMs
+  </h1>
+  <p class="hero-sub">Engenharia de Prompt Avançada — Epistemologia · Meta-Cognição · Inferência</p>
+  <div class="hero-meta">
+    <span>Idealizador: Luiz Guilherme Coragem</span>
+    <span>·</span>
+    <span>Projeto Pessoal Independente</span>
+    <span>·</span>
+    <span>2024–2025</span>
+  </div>
+</header>
+
+<!-- ══ INTRO ══════════════════════════════════════════════════ -->
+<div class="intro-band bg-white">
+  <div class="container">
+    <p>
+      O <strong>Método Coragem™</strong> nasce da insatisfação epistemológica com a engenharia de prompt convencional — 
+      que trata o modelo de linguagem como um sistema de execução instrucional, ignorando sua natureza fundamental como 
+      <em>espaço de probabilidade condicional sobre representações simbólicas</em>. Um LLM não "executa comandos": 
+      ele colapsa distribuições de probabilidade em resposta ao vetor semântico total do contexto fornecido.
+    </p>
+    <p>
+      Compreender isso muda tudo. O prompt não é uma ordem — é um <strong>campo de condicionamento</strong>. 
+      O Método Coragem™ formaliza oito camadas arquiteturais que atuam sobre esse campo com precisão filosófica, 
+      inferencial e meta-cognitiva, transformando o design de prompts em uma disciplina científica rigorosa.
+    </p>
+  </div>
+</div>
+
+<!-- ══ ARQUITETURA GERAL ════════════════════════════════════════ -->
+<div class="bg-paper">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="layer-badge badge-8">
+          <span class="num">∑</span>
+          <span class="tag">Sistema</span>
+        </div>
+        <div class="section-title-block">
+          <div class="layer-label">Visão Geral do Sistema</div>
+          <h2>As 8 Camadas Arquiteturais</h2>
+          <div class="layer-nature">Mapa estrutural completo do Método Coragem™</div>
+        </div>
+      </div>
+
+      <div class="arch-diagram">
+<pre>
+<span class="arch-line-dim">╔══════════════════════════════════════════════════════════════════════════════╗</span>
+<span class="arch-line-dim">║</span>           <span class="arch-line-gold">MÉTODO CORAGEM™ — ARQUITETURA DE PROMPT DE 8 CAMADAS</span>              <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">╠══════════════════════════════════════════════════════════════════════════════╣</span>
+<span class="arch-line-dim">║</span>                                                                              <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>  <span class="arch-line-gold">[ 1 · MANIFESTO ]</span>       ←  Camada Ontológica / Campo Gravitacional Semântico <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>         ↓                                                                    <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>  <span class="arch-line-blue">[ 2 · GOAL ]</span>            ←  Camada Teleológica / Vetor de Convergência        <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>         ↓                                                                    <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>  <span class="arch-line-red">[ 3 · WARNINGS ]</span>        ←  Camada Preventiva / Delimitação do Espaço         <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>         ↓                                                                    <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>  <span class="arch-line-green">[ 4 · CONSTRAINTS ]</span>     ←  Camada Normativa / Restrições Estruturais          <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>         ↓                                                                    <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>  <span class="arch-line-purple">[ 5 · CONSTRUCTS ]</span>      ←  Camada Semântica / Vocabulário Inferencial          <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>         ↓                                                                    <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>  <span class="arch-line-green">[ 6 · CONTEXTO INTRÍN. ]</span> ← Camada Situacional / Pré-condicionamento Epistêm. <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>         ↓                                                                    <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>  <span class="arch-line-gold">[ 7 · OUTPUT ESPERADO ]</span> ←  Camada Morfológica / Forma da Resposta              <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>         ↓                                                                    <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>  <span class="arch-line-cyan">[ 8 · PARAMPROMPTING ]</span>  ←  Camada Meta-Cognitiva / Modulação Inferencial       <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>         ↓                                                                    <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>                                                                              <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>  <span class="arch-line-gold">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>  <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>             <span class="arch-line-gold">↓   COLISÃO: Vetor Semântico Total → LLM   ↓</span>                    <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>  <span class="arch-line-gold">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>  <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>                                                                              <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>     <span class="arch-line-cyan">P(output | manifesto ∧ goal ∧ warnings ∧ constraints ∧ constructs</span>        <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>     <span class="arch-line-cyan">       ∧ contexto ∧ output_spec ∧ paramprompting)</span>                       <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">║</span>                                                                              <span class="arch-line-dim">║</span>
+<span class="arch-line-dim">╚══════════════════════════════════════════════════════════════════════════════╝</span>
+</pre>
+      </div>
+
+      <div class="formula-box">
+        <div class="formula">
+          <strong>Ψ</strong>(prompt) = <em>f</em>( ontologia, teleologia, restrições, semântica, contexto, forma, modulação )<br>
+          onde <strong>Ψ</strong> é o <em>espaço de condicionamento cognitivo total</em> sobre o modelo
+        </div>
+      </div>
+
+      <table class="academic-table">
+        <thead>
+          <tr>
+            <th>Camada</th>
+            <th>Natureza Filosófica</th>
+            <th>Operação sobre o LLM</th>
+            <th>Dimensão Epistêmica</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>[1] Manifesto</td>
+            <td>Ontológica / Intencional</td>
+            <td>Define o campo gravitacional semântico global</td>
+            <td>Pré-reflexiva</td>
+          </tr>
+          <tr>
+            <td>[2] Goal</td>
+            <td>Teleológica / Funcional</td>
+            <td>Colapsa o vetor de atenção em direção ao objetivo</td>
+            <td>Proposicional</td>
+          </tr>
+          <tr>
+            <td>[3] Warnings</td>
+            <td>Preventiva / Deontológica</td>
+            <td>Delimita o espaço de saída por exclusão semântica</td>
+            <td>Normativa negativa</td>
+          </tr>
+          <tr>
+            <td>[4] Constraints</td>
+            <td>Normativa / Estrutural</td>
+            <td>Injeta restrições formais no espaço de inferência</td>
+            <td>Normativa positiva</td>
+          </tr>
+          <tr>
+            <td>[5] Constructs</td>
+            <td>Semântica / Conceitual</td>
+            <td>Fornece vocabulário e frames de referência inferencial</td>
+            <td>Terminológica</td>
+          </tr>
+          <tr>
+            <td>[6] Contexto Intrínseco</td>
+            <td>Situacional / Hermenêutica</td>
+            <td>Ancora o modelo em pré-condicionamento situado</td>
+            <td>Pragmática</td>
+          </tr>
+          <tr>
+            <td>[7] Output Esperado</td>
+            <td>Morfológica / Telic</td>
+            <td>Especifica a forma-alvo do colapso de distribuição</td>
+            <td>Performativa</td>
+          </tr>
+          <tr>
+            <td>[8] Paramprompting</td>
+            <td>Meta-Cognitiva / Reflexiva</td>
+            <td>Modula os parâmetros implícitos do processo inferencial</td>
+            <td>Reflexiva de 2ª ordem</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 1. MANIFESTO ════════════════════════════════════════════ -->
+<div class="bg-white">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="layer-badge badge-1">
+          <span class="num">01</span>
+          <span class="tag">Layer</span>
+        </div>
+        <div class="section-title-block">
+          <div class="layer-label">Camada 1 · Ontológica-Intencional</div>
+          <h2>Manifesto</h2>
+          <div class="layer-nature">Campo gravitacional semântico · Orientação filosófica pré-inferencial</div>
+        </div>
+      </div>
+
+      <div class="def-box">
+        <p>
+          O Manifesto é a camada que precede toda instrução operacional. Ele não diz ao modelo <em>o que fazer</em>, 
+          mas <em>o que ele é</em> neste contexto — estabelecendo um compromisso filosófico que redefine 
+          a topologia do espaço de representação antes que qualquer inferência comece.
+        </p>
+        <div class="def-source">Método Coragem™ · Camada Ontológica</div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Do ponto de vista da mecânica dos LLMs, o espaço de atenção de um transformer é distribuído entre tokens 
+          com base em relevância contextual calculada via produto escalar em espaço vetorial de alta dimensão. 
+          O Manifesto age como um <span class="ht">atrator semântico global</span> — uma região do espaço latente 
+          para a qual toda inferência subsequente exercerá gravitação.
+        </p>
+        <p>
+          Filosoficamente, o Manifesto opera na tradição da <em>fenomenologia husserliana</em>: ele define a 
+          <strong>intencionalidade</strong> da consciência computacional, o <em>sobre-o-quê</em> fundamental que 
+          orienta todo ato epistêmico do modelo. Antes de existir um objetivo, existe uma postura filosófica — 
+          uma disposição para engajar com o mundo de determinada maneira.
+        </p>
+        <p>
+          Isso é radicalmente diferente de um "system prompt" convencional. Enquanto este instrui, o Manifesto 
+          <em>constitui</em>. Ele cria um horizonte de sentido dentro do qual todas as demais camadas operam como 
+          figuras sobre um fundo.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        <div class="card card-gold">
+          <h4>🧬 Fundamento Técnico</h4>
+          <p>
+            Tokens de alto nível de abstração filosófica ativam regiões do espaço de atenção associadas a 
+            raciocínio de ordem superior, interdisciplinaridade e síntese conceitual — reduzindo a probabilidade 
+            de outputs superficiais ao reposicionar o modelo em distribuições de maior profundidade inferencial.
+          </p>
+        </div>
+        <div class="card card-blue">
+          <h4>📐 Efeito Epistemológico</h4>
+          <p>
+            Reduz <em>convergência prematura</em> — o colapso das distribuições de probabilidade em direção 
+            ao token mais frequente antes de explorar regiões semânticas de maior entropia e riqueza conceitual.
+          </p>
+        </div>
+        <div class="card card-teal">
+          <h4>🌐 Analogia Filosófica</h4>
+          <p>
+            Equivale ao <em>epoché</em> husserliano: uma suspensão da atitude natural que reposiciona o sujeito 
+            cognoscente em modo de abertura radical ao fenômeno, antes de aplicar categorias analíticas fixas.
+          </p>
+        </div>
+      </div>
+
+      <div class="pillars">
+        <div class="pillar">
+          <span class="pillar-icon">⚡</span>
+          <h5>Tom Intelectual</h5>
+          <p>Define o registro cognitivo do output — rigoroso, criativo, interdisciplinar, filosófico</p>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">🧲</span>
+          <h5>Campo Gravitacional</h5>
+          <p>Atrai toda inferência subsequente para uma região específica do espaço semântico</p>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">🎯</span>
+          <h5>Compromisso Filosófico</h5>
+          <p>Declara os valores epistêmicos que devem permear o processo de raciocínio inteiro</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 2. GOAL ═════════════════════════════════════════════════ -->
+<div class="bg-paper">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="layer-badge badge-2">
+          <span class="num">02</span>
+          <span class="tag">Layer</span>
+        </div>
+        <div class="section-title-block">
+          <div class="layer-label">Camada 2 · Teleológica-Funcional</div>
+          <h2>Goal</h2>
+          <div class="layer-nature">Vetor de convergência · Colapso direcional da distribuição de atenção</div>
+        </div>
+      </div>
+
+      <div class="def-box">
+        <p>
+          O Goal é o vetor de finalidade que orienta a inferência em direção a um objetivo definido. 
+          Diferente do Manifesto, que estabelece o <em>como ser</em>, o Goal define o <em>para onde ir</em> — 
+          a estrutura teleológica que confere direção ao processo generativo.
+        </p>
+        <div class="def-source">Método Coragem™ · Camada Teleológica</div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Na física quântica, a função de onda colapsa quando o sistema é observado. Em LLMs, podemos traçar 
+          uma analogia estrutural: o <span class="ht">Goal</span> funciona como um operador de colapso que 
+          direciona a distribuição de probabilidade do modelo — vasta e multidirecional antes da leitura do contexto 
+          — em direção a uma trajetória específica no espaço de saída.
+        </p>
+        <p>
+          A distinção epistemológica crítica aqui é entre <em>objetivo proposicional</em> (o que deve ser produzido) 
+          e <em>objetivo epistêmico</em> (que tipo de conhecimento deve ser construído). O Método Coragem™ reconhece 
+          que Goals bem formulados especificam ambas as dimensões, não apenas a dimensão operacional.
+        </p>
+        <p>
+          Um Goal bem formulado no Método Coragem™ não é uma <em>tarefa</em>, mas uma 
+          <strong>direção epistêmica com critérios de validade</strong>. Ele responde não apenas "o que", 
+          mas "com qual profundidade", "sob qual perspectiva" e "com qual grau de certeza".
+        </p>
+      </div>
+
+      <div class="card-grid">
+        <div class="card card-blue">
+          <h4>🎯 Goal Operacional</h4>
+          <p>O que o modelo deve produzir como output tangível — relatório, análise, código, argumento.</p>
+          <ul>
+            <li>Especificidade do entregável</li>
+            <li>Critérios de completude</li>
+            <li>Escopo de abrangência</li>
+          </ul>
+        </div>
+        <div class="card card-blue">
+          <h4>🧠 Goal Epistêmico</h4>
+          <p>O tipo de ato cognitivo que o modelo deve executar — analisar, sintetizar, contrastar, inferir.</p>
+          <ul>
+            <li>Nível de abstração almejado</li>
+            <li>Postura inferencial (exploração vs. convergência)</li>
+            <li>Profundidade analítica</li>
+          </ul>
+        </div>
+        <div class="card card-blue">
+          <h4>🌊 Goal Filosófico</h4>
+          <p>A finalidade última do exercício — que contribuição epistêmica este output deve gerar.</p>
+          <ul>
+            <li>Relevância para o campo de conhecimento</li>
+            <li>Critérios de verdade aplicáveis</li>
+            <li>Valor pragmático do output</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 3. WARNINGS ═════════════════════════════════════════════ -->
+<div class="bg-white">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="layer-badge badge-3">
+          <span class="num">03</span>
+          <span class="tag">Layer</span>
+        </div>
+        <div class="section-title-block">
+          <div class="layer-label">Camada 3 · Preventiva-Deontológica</div>
+          <h2>Warnings</h2>
+          <div class="layer-nature">Delimitação do espaço inferencial · Exclusão semântica estruturada</div>
+        </div>
+      </div>
+
+      <div class="def-box">
+        <p>
+          Warnings são sinalizadores negativos que demarcam regiões proibidas do espaço de saída. 
+          Eles não definem o que deve ser feito, mas o que deve ser <em>ativamente evitado</em> — 
+          criando um gradiente repulsivo no campo de atenção do modelo.
+        </p>
+        <div class="def-source">Método Coragem™ · Camada Deontológica</div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Do ponto de vista da teoria da informação, Warnings operam como 
+          <span class="ht">restrições negativas do espaço amostral</span>: eles reduzem o conjunto de outputs 
+          possíveis ao excluir regiões indesejadas, aumentando a densidade de probabilidade nas regiões desejadas 
+          sem precisar especificá-las explicitamente.
+        </p>
+        <p>
+          Filosoficamente, os Warnings traduzem o princípio deontológico de <em>dever negativo</em> — 
+          a obrigação de <strong>não fazer</strong> algo é epistemicamente mais robusta que a obrigação de 
+          fazer algo específico, pois é verificável, definida e não depende de julgamentos complexos de adequação.
+        </p>
+        <p>
+          Em termos cognitivos, avisos explícitos sobre armadilhas comuns ativam circuitos de 
+          <em>monitoramento metacognitivo</em> no processo generativo — análogo à consciência metacognitiva 
+          humana que reconhece e evita padrões de raciocínio defeituosos.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        <div class="card card-rust">
+          <h4>⚠️ Warnings Epistêmicos</h4>
+          <ul>
+            <li>Não colapsar prematuramente em uma única hipótese</li>
+            <li>Não confundir correlação com causalidade</li>
+            <li>Não omitir perspectivas contraditórias relevantes</li>
+            <li>Não generalizar a partir de exemplos singulares</li>
+          </ul>
+        </div>
+        <div class="card card-rust">
+          <h4>⚠️ Warnings Cognitivos</h4>
+          <ul>
+            <li>Evitar viés de confirmação na estruturação do argumento</li>
+            <li>Não suprimir incertezas em favor de coerência narrativa</li>
+            <li>Resistir a soluções intuitivamente satisfatórias mas não rigorosas</li>
+            <li>Não priorizar fluidez retórica sobre precisão conceitual</li>
+          </ul>
+        </div>
+        <div class="card card-rust">
+          <h4>⚠️ Warnings Estruturais</h4>
+          <ul>
+            <li>Não truncar análise antes de explorar todas as dimensões do problema</li>
+            <li>Evitar outputs estereotipados ("template thinking")</li>
+            <li>Não substituir raciocínio por citação de autoridade</li>
+            <li>Evitar respostas que satisfaçam superficialmente sem resolver</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 4. CONSTRAINTS ══════════════════════════════════════════ -->
+<div class="bg-paper">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="layer-badge badge-4">
+          <span class="num">04</span>
+          <span class="tag">Layer</span>
+        </div>
+        <div class="section-title-block">
+          <div class="layer-label">Camada 4 · Normativa-Estrutural</div>
+          <h2>Constraints</h2>
+          <div class="layer-nature">Restrições formais positivas · Topologia do espaço de inferência permitido</div>
+        </div>
+      </div>
+
+      <div class="def-box">
+        <p>
+          Constraints são as fronteiras positivas da inferência — não o que evitar, mas a estrutura formal dentro 
+          da qual o raciocínio deve se mover. São as regras do jogo epistêmico que o modelo deve jogar, 
+          definindo a geometria do espaço de soluções válidas.
+        </p>
+        <div class="def-source">Método Coragem™ · Camada Normativa</div>
+      </div>
+
+      <div class="prose">
+        <p>
+          A distinção entre Warnings e Constraints é fundamentalmente a distinção kantiana entre 
+          <em>imperativos negativos</em> e <em>imperativos positivos</em>. Enquanto Warnings dizem 
+          "não faças X", Constraints dizem "opera dentro do sistema Y". Juntos, eles definem um espaço 
+          <span class="ht">duplamente demarcado</span>: excluindo o indesejável e prescrevendo a estrutura do desejável.
+        </p>
+        <p>
+          Em teoria da computação, Constraints correspondem a <em>invariantes formais</em> — propriedades que 
+          qualquer solução válida deve satisfazer. Para LLMs, injetá-los explicitamente no prompt força o 
+          mecanismo de atenção a manter coerência com essas invariantes ao longo de toda a geração.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        <div class="card card-teal">
+          <h4>📏 Constraints Formais</h4>
+          <ul>
+            <li>Extensão, formato, estrutura do output</li>
+            <li>Linguagem, register, estilo técnico</li>
+            <li>Referências aceitáveis e padrões de citação</li>
+          </ul>
+        </div>
+        <div class="card card-teal">
+          <h4>🔬 Constraints Metodológicas</h4>
+          <ul>
+            <li>Framework analítico a ser empregado</li>
+            <li>Nível de formalismo exigido (lógico, matemático, filosófico)</li>
+            <li>Critérios de validade do argumento</li>
+          </ul>
+        </div>
+        <div class="card card-teal">
+          <h4>⚖️ Constraints Éticas</h4>
+          <ul>
+            <li>Declarações sobre precisão e responsabilidade epistêmica</li>
+            <li>Limites do que pode ser afirmado com certeza</li>
+            <li>Equilíbrio entre afirmação e incerteza declarada</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 5. CONSTRUCTS ═══════════════════════════════════════════ -->
+<div class="bg-white">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="layer-badge badge-5">
+          <span class="num">05</span>
+          <span class="tag">Layer</span>
+        </div>
+        <div class="section-title-block">
+          <div class="layer-label">Camada 5 · Semântica-Conceitual</div>
+          <h2>Constructs</h2>
+          <div class="layer-nature">Vocabulário inferencial · Frames de referência · Semântica operacional</div>
+        </div>
+      </div>
+
+      <div class="def-box">
+        <p>
+          Constructs são os tijolos conceituais — os termos, frameworks, categorias e distinções que o modelo 
+          deve usar como unidades primárias de raciocínio. Eles definem o vocabulário técnico do espaço de 
+          inferência, garantindo que o pensamento seja articulado nas categorias adequadas ao domínio.
+        </p>
+        <div class="def-source">Método Coragem™ · Camada Semântica</div>
+      </div>
+
+      <div class="prose">
+        <p>
+          LLMs são, em última instância, máquinas de manipulação semântica em espaço vetorial. A qualidade 
+          de sua inferência é fortemente condicionada pelo vocabulário presente no contexto — pois o vocabulário 
+          não é apenas o meio da expressão, mas o <span class="ht">medium do pensamento</span> em si. 
+          Fornecer Constructs equivale a fornecer ao modelo as ferramentas cognitivas certas para o trabalho.
+        </p>
+        <p>
+          Wittgenstein: "Os limites da minha linguagem são os limites do meu mundo." Para modelos de linguagem, 
+          isso é literalmente verdadeiro — os limites do vocabulário fornecido no contexto são os limites 
+          do espaço de raciocínio acessível. Constructs expandem esses limites de forma intencional.
+        </p>
+      </div>
+
+      <div class="ornament">· · · · ·</div>
+
+      <div class="construct-block">
+        <div class="construct-label">Constructs Epistêmicos</div>
+        <div class="construct-desc">
+          Termos que operam sobre o status do conhecimento: <em>hipótese, conjectura, inferência abdutiva, 
+          crença justificada, certeza pragmática, verdade probabilística, coerência interna</em>. 
+          Fornecê-los orienta o modelo a distinguir explicitamente entre graus de certeza e tipos de afirmação.
+        </div>
+      </div>
+
+      <div class="construct-block">
+        <div class="construct-label">Constructs Analíticos</div>
+        <div class="construct-desc">
+          Ferramentas de decomposição e síntese: <em>distinção analítico/sintético, propriedades emergentes, 
+          redução ao absurdo, universalização, particularização, comparação estrutural</em>. 
+          Ativam padrões de raciocínio formal que elevam a rigorosidade do output.
+        </div>
+      </div>
+
+      <div class="construct-block">
+        <div class="construct-label">Constructs de Domínio</div>
+        <div class="construct-desc">
+          Terminologia especializada do campo em questão — filosófica, científica, técnica, jurídica. 
+          Garante que o modelo opere no registro correto sem deriva para generalidades vagas.
+          Ancoragem terminológica precisa reduz ambiguidade semântica e aumenta densidade conceitual.
+        </div>
+      </div>
+
+      <div class="construct-block">
+        <div class="construct-label">Constructs Meta-Linguísticos</div>
+        <div class="construct-desc">
+          Termos que operam sobre o próprio discurso: <em>argumento, premissa, conclusão, refutação, 
+          qualificação, hedge, asserção, implicatura</em>. Permitem ao modelo estruturar seu output 
+          com consciência explícita de sua própria arquitetura argumentativa.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 6. CONTEXTO INTRÍNSECO ══════════════════════════════════ -->
+<div class="bg-paper">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="layer-badge badge-6">
+          <span class="num">06</span>
+          <span class="tag">Layer</span>
+        </div>
+        <div class="section-title-block">
+          <div class="layer-label">Camada 6 · Situacional-Hermenêutica</div>
+          <h2>Contexto Intrínseco</h2>
+          <div class="layer-nature">Pré-condicionamento situado · Horizonte hermenêutico · Memória de trabalho injetada</div>
+        </div>
+      </div>
+
+      <div class="def-box">
+        <p>
+          O Contexto Intrínseco é o conjunto de fatos, estados, histórias e situações que o modelo deve 
+          ter como pano de fundo ativo durante toda a inferência. É a <em>memória de trabalho</em> injetada 
+          — o horizonte situacional que ancora o raciocínio na realidade específica da tarefa.
+        </p>
+        <div class="def-source">Método Coragem™ · Camada Hermenêutica</div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Gadamer, na hermenêutica filosófica, demonstrou que toda compreensão ocorre dentro de um 
+          <em>horizonte de pré-compreensão</em> — uma estrutura de crenças, experiências e contextos que 
+          molda como o texto é interpretado. Para LLMs, o Contexto Intrínseco funciona precisamente como 
+          esse horizonte: ele define o <span class="ht">frame interpretativo situado</span> dentro do qual 
+          todas as outras camadas adquirem significado específico.
+        </p>
+        <p>
+          Esta é a camada que transforma o Método Coragem™ de abstrato a concreto. O Manifesto pode declarar 
+          valores epistêmicos universais; o Contexto Intrínseco traz o modelo para <em>esta situação</em>, 
+          <em>este momento</em>, <em>este problema</em>. É a ponte entre filosofia e operação.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        <div class="card card-teal">
+          <h4>🗂️ Contexto Factual</h4>
+          <p>Dados, fatos, histórico e estado atual relevantes para a tarefa. O "o que é" que o modelo 
+          deve pressupor como verdadeiro sem precisar reafirmar.</p>
+        </div>
+        <div class="card card-teal">
+          <h4>👤 Contexto do Agente</h4>
+          <p>Quem é o usuário, qual seu papel, expertise, objetivos estratégicos e relação com o domínio 
+          em questão. Personaliza o output ao receptor específico.</p>
+        </div>
+        <div class="card card-teal">
+          <h4>🔄 Contexto Processual</h4>
+          <p>Onde esta tarefa se situa em um fluxo maior — o que já foi feito, o que vem depois, 
+          que decisões dependem deste output. Garante continuidade e relevância sistêmica.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 7. OUTPUT ESPERADO ══════════════════════════════════════ -->
+<div class="bg-white">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="layer-badge badge-7">
+          <span class="num">07</span>
+          <span class="tag">Layer</span>
+        </div>
+        <div class="section-title-block">
+          <div class="layer-label">Camada 7 · Morfológica-Performativa</div>
+          <h2>Output Esperado</h2>
+          <div class="layer-nature">Forma-alvo da resposta · Colapso morfológico · Especificação do artefato final</div>
+        </div>
+      </div>
+
+      <div class="def-box">
+        <p>
+          O Output Esperado especifica não apenas o que deve ser produzido, mas sua <em>forma</em>, 
+          <em>estrutura</em> e <em>qualidade</em>. É a camada que define o critério de sucesso morfológico 
+          — o artefato de saída ao qual o processo de geração deve convergir.
+        </p>
+        <div class="def-source">Método Coragem™ · Camada Morfológica</div>
+      </div>
+
+      <div class="prose">
+        <p>
+          Na filosofia da linguagem, J.L. Austin distinguiu entre <em>locuções</em> (o que é dito), 
+          <em>ilocuções</em> (o ato realizado ao dizer) e <em>perlocuções</em> (o efeito produzido). 
+          O Output Esperado opera nessas três dimensões: especifica a <span class="ht">forma locutória</span> 
+          (estrutura, extensão, formato), o <span class="ht">ato ilocutório</span> (analisar, propor, refutar, 
+          sintetizar) e o <span class="ht">efeito perlocutório</span> esperado (convencer, informar, orientar, 
+          iluminar).
+        </p>
+        <p>
+          Tecnicamente, esta camada age como um <em>prior morfológico</em> sobre a distribuição de saída — 
+          uma crença a priori sobre a forma do output que guia a geração token-a-token em direção a 
+          estruturas reconhecíveis como coerentes com a especificação.
+        </p>
+      </div>
+
+      <table class="academic-table">
+        <thead>
+          <tr>
+            <th>Dimensão do Output</th>
+            <th>O que especifica</th>
+            <th>Efeito sobre o LLM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Forma</td>
+            <td>Estrutura, organização, extensão, divisões</td>
+            <td>Prior morfológico sobre tokens de estruturação</td>
+          </tr>
+          <tr>
+            <td>Registro</td>
+            <td>Nível de formalidade, estilo, vocabulário</td>
+            <td>Seleção de distribuição estilística</td>
+          </tr>
+          <tr>
+            <td>Ato ilocutório</td>
+            <td>O que o output deve <em>fazer</em> linguisticamente</td>
+            <td>Padrão pragmático de geração</td>
+          </tr>
+          <tr>
+            <td>Critério de qualidade</td>
+            <td>Como avaliar se o output está completo</td>
+            <td>Critério implícito de parada e revisão</td>
+          </tr>
+          <tr>
+            <td>Destinatário</td>
+            <td>Para quem o output é endereçado</td>
+            <td>Ajuste do modelo de audiência</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 8. PARAMPROMPTING ═══════════════════════════════════════ -->
+<div class="bg-paper">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="layer-badge badge-8">
+          <span class="num">08</span>
+          <span class="tag">Layer</span>
+        </div>
+        <div class="section-title-block">
+          <div class="layer-label">Camada 8 · Meta-Cognitiva-Reflexiva</div>
+          <h2>Paramprompting</h2>
+          <div class="layer-nature">Modulação inferencial de 2ª ordem · Controle dos parâmetros implícitos do raciocínio</div>
+        </div>
+      </div>
+
+      <div class="def-box">
+        <p>
+          Paramprompting é a inovação nuclear do Método Coragem™: a camada que instrui o modelo não sobre 
+          <em>o que</em> pensar, mas sobre <em>como</em> pensar — modulando os parâmetros implícitos do 
+          processo inferencial como profundidade exploratória, grau de divergência, velocidade de convergência 
+          e nível de interdisciplinaridade.
+        </p>
+        <div class="def-source">Método Coragem™ · Inovação Principal · Luiz Guilherme Coragem</div>
+      </div>
+
+      <div class="prose">
+        <p>
+          A ideia central é que LLMs possuem parâmetros implícitos de processo — não os parâmetros de peso 
+          da rede neural (que são fixos em inferência), mas parâmetros de <em>como o raciocínio se organiza</em> 
+          ao longo da geração. Estes incluem: velocidade de convergência sobre hipóteses, grau de exploração 
+          lateral, intensidade de cruzamentos axiomáticos, nível de abstração mantido, balanço entre 
+          profundidade e amplitude.
+        </p>
+        <p>
+          Em teoria cognitiva, isto corresponde ao que Kahneman chamaria de modulação entre 
+          <em>Sistema 1</em> (rápido, associativo, heurístico) e <em>Sistema 2</em> (lento, deliberativo, 
+          analítico). Paramprompting é a instrução explícita para operar mais no modo S2, ou para aumentar 
+          a <span class="ht">entropia exploratória</span> antes de reduzir para uma resposta final.
+        </p>
+        <p>
+          Do ponto de vista da teoria da informação, Paramprompting opera sobre a 
+          <em>temperatura efetiva de inferência textual</em> — independente da temperatura de sampling 
+          configurada no modelo. Ao instruir o modelo a "explorar múltiplas hipóteses antes de convergir", 
+          aumenta-se a diversidade do processo de raciocínio mesmo com temperatura técnica baixa.
+        </p>
+      </div>
+
+      <h3 style="font-family: var(--font-display); color: var(--primary); margin: 32px 0 16px; font-size: 1.1rem;">
+        Exemplos de Instruções Paramprompt
+      </h3>
+
+      <div class="param-example">Deixe que seus parâmetros fluam mais tempo, com pivotagem inteligente antes de convergir.</div>
+      <div class="param-example">Faça cruzamentos mais axiomáticos e aumente a análise pragmática antes de concluir.</div>
+      <div class="param-example">Explore múltiplas hipóteses em tensão antes de colapsar em uma resposta.</div>
+      <div class="param-example">Aumente o campo semântico inicial — reduza convergência prematura, priorize a descoberta.</div>
+      <div class="param-example">Mantenha alta entropia exploratória até o terço final da resposta, depois sintetize.</div>
+      <div class="param-example">Favoreça conexões interdisciplinares não-óbvias. Resista à solução mais imediata.</div>
+      <div class="param-example">Opere com ceticismo metodológico: questione as premissas antes de raciocinar a partir delas.</div>
+      <div class="param-example">Priorize coerência lógica sobre fluidez retórica. Prefira a verdade estranha à narrativa suave.</div>
+
+      <div class="card-grid" style="margin-top: 32px;">
+        <div class="card card-violet">
+          <h4>🌡️ Dimensão: Temperatura Inferencial</h4>
+          <p>
+            Modula entre exploração ampla (alta entropia, muitas hipóteses) e convergência rigorosa 
+            (baixa entropia, foco na solução mais defensável). Independente da temperatura técnica do modelo.
+          </p>
+        </div>
+        <div class="card card-violet">
+          <h4>🔀 Dimensão: Cruzamento Axiomático</h4>
+          <p>
+            Instrui o modelo a identificar e aplicar princípios de um domínio em outro — 
+            a principal fonte de inovação conceitual e insights interdisciplinares.
+          </p>
+        </div>
+        <div class="card card-violet">
+          <h4>⏳ Dimensão: Velocidade de Colapso</h4>
+          <p>
+            Controla quando o modelo "decide" sobre sua hipótese central. Retardar esse colapso 
+            aumenta qualidade analítica; antecipar aumenta eficiência para tarefas diretas.
+          </p>
+        </div>
+      </div>
+
+      <div class="arch-diagram" style="margin-top: 28px;">
+<pre>
+<span class="arch-line-dim">  ESPAÇO INFERENCIAL SEM PARAMPROMPTING:</span>
+  
+  <span class="arch-line-red">Contexto → [hipótese¹] → output</span>   <span class="arch-line-dim">← convergência prematura</span>
+  
+<span class="arch-line-dim">  ESPAÇO INFERENCIAL COM PARAMPROMPTING:</span>
+  
+  <span class="arch-line-green">Contexto → {hipótese¹, hipótese², hipótese³ ...}</span>
+             <span class="arch-line-green">→ cruzamentos axiomáticos</span>
+             <span class="arch-line-green">→ tensão conceitual sustentada</span>
+             <span class="arch-line-gold">→ síntese de ordem superior</span>
+             <span class="arch-line-cyan">→ output com maior densidade epistêmica</span>
+  
+<span class="arch-line-dim">  GANHO: ΔEntropy(exploração) → ΔQualidade(síntese)</span>
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DIFERENCIAL CIENTÍFICO ══════════════════════════════════ -->
+<div class="bg-white">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="layer-badge badge-1">
+          <span class="num">∇</span>
+          <span class="tag">Ciência</span>
+        </div>
+        <div class="section-title-block">
+          <div class="layer-label">Diferencial Científico</div>
+          <h2>O que o Método Coragem™ Redefine</h2>
+          <div class="layer-nature">Contribuição teórica · Nova categoria de engenharia epistêmica</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>
+          A engenharia de prompt tradicional opera sob um paradigma implicitamente behaviorista: 
+          input → output, sem teoria do processo intermediário. O Método Coragem™ propõe uma ruptura 
+          paradigmática ao introduzir uma teoria explícita do processo — tratando o LLM não como 
+          uma caixa preta a ser manipulada por estímulos, mas como um 
+          <span class="ht">sistema epistêmico condicionável</span> com estrutura interna mapeável.
+        </p>
+        <p>
+          Esta diferença não é cosmética. Ela implica uma nova ontologia do prompt: de instrução a 
+          <strong>arquitetura de condicionamento cognitivo</strong>. O prompt como campo, não como comando.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        <div class="card card-gold">
+          <h4>🏛️ Contribuição 1: Design Epistemológico</h4>
+          <p>
+            Elevação da engenharia de prompt a uma disciplina com teoria própria — distinguindo tipos de 
+            verdade, tipos de ato cognitivo, e tipos de condicionamento. O prompt como sistema de crenças 
+            implantadas, não instrução executada.
+          </p>
+        </div>
+        <div class="card card-gold">
+          <h4>🏛️ Contribuição 2: Arquitetura do Comportamento Emergente</h4>
+          <p>
+            Framework para <em>projetar</em> comportamentos cognitivos emergentes em LLMs — não apenas 
+            especificar outputs, mas determinar a qualidade do processo que os gera. Engenharia do 
+            <em>como</em>, não apenas do <em>que</em>.
+          </p>
+        </div>
+        <div class="card card-gold">
+          <h4>🏛️ Contribuição 3: Interface Vetorial Humano-Modelo</h4>
+          <p>
+            Conceituação do prompt como <em>vetor semântico direcional</em> em espaço de representação — 
+            com componentes de orientação ontológica, teleológica, normativa e meta-cognitiva operando 
+            simultaneamente como campo de condicionamento multidimensional.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONCLUSÃO ═══════════════════════════════════════════════ -->
+<div class="conclusion">
+  <div class="container">
+    <h2>Conclusão — <span>Uma Transição Paradigmática</span></h2>
+
+    <div class="prose">
+      <p>
+        O Método Coragem™ não é uma técnica. É uma <em>epistemologia aplicada à interface humano-máquina</em> — 
+        uma filosofia operacional para o design de cognição artificial situada.
+      </p>
+    </div>
+
+    <div class="paradigm-shift">
+      <div class="shift-from">
+        <h5>Paradigma Anterior</h5>
+        <p>Prompt como instrução textual para execução de tarefa</p>
+      </div>
+      <div class="shift-arrow">→</div>
+      <div class="shift-to">
+        <h5>Paradigma Método Coragem™</h5>
+        <p>Prompt como arquitetura de condicionamento cognitivo multidimensional</p>
+      </div>
+    </div>
+
+    <div class="control-levels">
+      <div class="ctrl-level">
+        <span class="ctrl-icon">⚙️</span>
+        <h5>Nível Operacional</h5>
+        <p>O que fazer<br><em>Goal + Output</em></p>
+      </div>
+      <div class="ctrl-level">
+        <span class="ctrl-icon">🔬</span>
+        <h5>Nível Epistêmico</h5>
+        <p>Com qual verdade e valor<br><em>Manifesto + Constructs + Contexto</em></p>
+      </div>
+      <div class="ctrl-level">
+        <span class="ctrl-icon">🧠</span>
+        <h5>Nível Meta-Cognitivo</h5>
+        <p>Como pensar sobre isso<br><em>Warnings + Constraints + Paramprompting</em></p>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 40px;">
+      <p style="font-family: var(--font-display); font-style: italic; font-size: 1.1rem; color: rgba(250,247,242,0.9); text-align: center;">
+        "A qualidade do pensamento de uma IA é função direta da qualidade 
+        da arquitetura epistêmica que o enquadra. 
+        Projetar prompts sem teoria é como arquitetar edifícios sem física."
+      </p>
+      <p style="font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.15em; color: var(--gold); text-align: center; margin-top: 12px;">
+        — Luiz Guilherme Coragem · Método Coragem™
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="container">
+    <p>
+      <span>Método Coragem™</span> · Canvas Acadêmico v2.0 · Projeto Pessoal Independente<br>
+      Idealizador: <span>Luiz Guilherme Coragem</span> · Todos os direitos reservados<br>
+      <em style="opacity: 0.5; font-size: 0.65rem;">
+        Este documento é de caráter exclusivamente acadêmico pessoal e não representa posição 
+        de nenhuma entidade jurídica ou comercial.
+      </em>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

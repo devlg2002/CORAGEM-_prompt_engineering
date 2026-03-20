@@ -1,0 +1,3082 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SuperLib™ Paramprompting — Método Coragem™</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Fira+Code:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080b10;
+      --bg2: #0d1117;
+      --bg3: #111820;
+      --surface: #141c26;
+      --surface2: #1a2535;
+      --border: #1e2d40;
+      --border2: #243448;
+      --text: #c8d8e8;
+      --text-dim: #5a7a95;
+      --text-muted: #3a5570;
+
+      --mode-I:    #2060e0;
+      --mode-II:   #c03030;
+      --mode-III:  #1a9040;
+      --mode-IV:   #8030c0;
+      --mode-V:    #c08020;
+      --mode-VI:   #d04060;
+      --mode-VII:  #20a0b0;
+      --mode-VIII: #e07020;
+      --mode-IX:   #6040c0;
+      --mode-X:    #30b060;
+      --mode-XI:   #b04020;
+
+      --gold: #c8963e;
+      --gold-dim: rgba(200,150,62,0.15);
+
+      --ff-display: 'Syne', sans-serif;
+      --ff-body: 'Lora', Georgia, serif;
+      --ff-mono: 'Fira Code', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ff-body);
+      font-size: 15px;
+      line-height: 1.75;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ─────────────────────────────── */
+    .sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+    .sidebar-logo {
+      padding: 28px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-logo .brand {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .sidebar-logo .brand span { color: var(--gold); }
+
+    .sidebar-logo .version {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      margin-top: 6px;
+    }
+
+    .nav-section {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-section-label {
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 6px 20px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      text-decoration: none;
+      color: var(--text-dim);
+      font-family: var(--ff-mono);
+      font-size: 0.75rem;
+      transition: all 0.15s ease;
+      border-left: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      border-left-color: var(--gold);
+      background: var(--gold-dim);
+      color: #fff;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .nav-count {
+      margin-left: auto;
+      font-size: 0.62rem;
+      background: var(--surface2);
+      padding: 1px 6px;
+      border-radius: 10px;
+      color: var(--text-muted);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      font-family: var(--ff-mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── MAIN ────────────────────────────────── */
+    .main {
+      flex: 1;
+      min-width: 0;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ────────────────────────────────── */
+    .hero {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 60px 50px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 70% 50%, rgba(200,150,62,0.06) 0%, transparent 60%),
+        repeating-linear-gradient(
+          90deg,
+          transparent, transparent 59px,
+          rgba(255,255,255,0.012) 59px, rgba(255,255,255,0.012) 60px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent, transparent 59px,
+          rgba(255,255,255,0.012) 59px, rgba(255,255,255,0.012) 60px
+        );
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      font-family: var(--ff-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--gold);
+    }
+
+    .hero-desc {
+      max-width: 680px;
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      font-style: italic;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-num {
+      font-family: var(--ff-display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-family: var(--ff-mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* ── SECTION ─────────────────────────────── */
+    .content {
+      padding: 0 60px 80px;
+    }
+
+    .mode-section {
+      padding: 56px 0 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .mode-section:last-child { border-bottom: none; }
+
+    .mode-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .mode-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 6px;
+      font-family: var(--ff-mono);
+      font-size: 1rem;
+      font-weight: 600;
+      flex-shrink: 0;
+      border: 1px solid;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mode-badge::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.12;
+    }
+
+    .mode-badge .roman {
+      font-size: 0.72rem;
+      font-weight: 400;
+      opacity: 0.6;
+      margin-top: 2px;
+    }
+
+    .mode-info { flex: 1; }
+
+    .mode-tag {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .mode-info h2 {
+      font-family: var(--ff-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .mode-nature {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* ── EPISTEMIC CARD ──────────────────────── */
+    .epistemic-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      padding: 22px 26px;
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .epistemic-card::before {
+      content: 'FUNDAMENTO EPISTÊMICO';
+      position: absolute;
+      top: -9px;
+      left: 20px;
+      background: var(--surface);
+      padding: 0 10px;
+      font-family: var(--ff-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+    }
+
+    .epistemic-card p {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      text-align: justify;
+      margin-bottom: 0.8em;
+    }
+
+    .epistemic-card p:last-child { margin-bottom: 0; }
+
+    .epistemic-card strong { color: var(--text); }
+
+    .epistemic-card em { color: inherit; font-style: italic; }
+
+    .ht {
+      font-family: var(--ff-mono);
+      font-size: 0.82em;
+      padding: 1px 7px;
+      border-radius: 3px;
+      font-style: normal;
+    }
+
+    /* ── INSTRUCTIONS LIST ───────────────────── */
+    .instructions-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .instruction-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .instruction-card:hover { border-color: var(--border2); }
+
+    .instr-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .instr-num {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      width: 24px;
+      flex-shrink: 0;
+    }
+
+    .instr-text {
+      font-family: var(--ff-mono);
+      font-size: 0.82rem;
+      color: #c8e0f8;
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    .instr-text::before { content: '❝ '; opacity: 0.4; }
+    .instr-text::after { content: ' ❞'; opacity: 0.4; }
+
+    .instr-toggle {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .instruction-card.open .instr-toggle { transform: rotate(180deg); }
+
+    .instr-body {
+      display: none;
+      padding: 0 18px 18px 56px;
+      border-top: 1px solid var(--border);
+    }
+
+    .instruction-card.open .instr-body { display: block; }
+
+    .instr-mechanism {
+      margin-top: 14px;
+    }
+
+    .instr-mechanism-label {
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .instr-mechanism p {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      text-align: justify;
+      line-height: 1.7;
+    }
+
+    .instr-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      padding: 2px 8px;
+      border-radius: 3px;
+      border: 1px solid;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── OBJECTIVE BOX ───────────────────────── */
+    .objective-box {
+      border-radius: 6px;
+      padding: 18px 22px;
+      margin-bottom: 40px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .objective-box .obj-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .objective-box .obj-content { flex: 1; }
+
+    .objective-box .obj-label {
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .objective-box p {
+      font-size: 0.88rem;
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* ── PIPELINE SECTION ────────────────────── */
+    .pipeline-section {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 36px 40px;
+      margin: 56px 0;
+    }
+
+    .pipeline-section h3 {
+      font-family: var(--ff-display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .pipeline-section .pipeline-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      font-style: italic;
+      margin-bottom: 28px;
+    }
+
+    .pipeline {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .pipeline::-webkit-scrollbar { height: 3px; }
+    .pipeline::-webkit-scrollbar-thumb { background: var(--border2); }
+
+    .pipe-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 110px;
+    }
+
+    .pipe-node {
+      width: 80px;
+      height: 80px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid;
+      font-family: var(--ff-mono);
+      font-size: 0.68rem;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.3;
+      padding: 6px;
+      position: relative;
+    }
+
+    .pipe-node .pipe-roman {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .pipe-connector {
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      color: var(--text-muted);
+      font-family: var(--ff-mono);
+      font-size: 1.2rem;
+      padding-bottom: 30px;
+    }
+
+    .pipe-label {
+      font-family: var(--ff-mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 8px;
+      letter-spacing: 0.05em;
+      line-height: 1.4;
+    }
+
+    /* ── PROFILES ────────────────────────────── */
+    .profiles-section {
+      margin: 48px 0;
+    }
+
+    .profiles-section h3 {
+      font-family: var(--ff-display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .profiles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .profile-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      padding: 22px;
+    }
+
+    .profile-card h4 {
+      font-family: var(--ff-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-card .modes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .mode-ref {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      padding: 3px 8px;
+      border-radius: 3px;
+      border: 1px solid;
+    }
+
+    /* ── COLOR THEMES PER MODE ───────────────── */
+    .m1 { --mc: var(--mode-I); }
+    .m2 { --mc: var(--mode-II); }
+    .m3 { --mc: var(--mode-III); }
+    .m4 { --mc: var(--mode-IV); }
+    .m5 { --mc: var(--mode-V); }
+    .m6 { --mc: var(--mode-VI); }
+    .m7 { --mc: var(--mode-VII); }
+    .m8 { --mc: var(--mode-VIII); }
+    .m9 { --mc: var(--mode-IX); }
+    .m10 { --mc: var(--mode-X); }
+    .m11 { --mc: var(--mode-XI); }
+
+    [class^="m"] .mode-badge {
+      background: rgba(0,0,0,0.3);
+      border-color: var(--mc);
+      color: var(--mc);
+    }
+    [class^="m"] .mode-badge::before { background: var(--mc); }
+    [class^="m"] .mode-tag { color: var(--mc); }
+    [class^="m"] .objective-box { background: rgba(0,0,0,0.2); border: 1px solid; border-color: rgba(128,128,128,0.15); }
+    [class^="m"] .objective-box .obj-label { color: var(--mc); }
+    [class^="m"] .objective-box p { color: var(--text-dim); }
+    [class^="m"] .ht { background: rgba(0,0,0,0.3); border: 1px solid var(--mc); color: var(--mc); }
+    [class^="m"] .instr-toggle { color: var(--mc); }
+    [class^="m"] .tag { border-color: var(--mc); color: var(--mc); background: rgba(0,0,0,0.3); }
+    [class^="m"] .mode-ref { border-color: var(--mc); color: var(--mc); background: rgba(0,0,0,0.3); }
+
+    /* ── INTRO SECTION ───────────────────────── */
+    .intro-section {
+      padding: 48px 0 40px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .intro-section h2 {
+      font-family: var(--ff-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .intro-section p {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+      text-align: justify;
+      max-width: 760px;
+      margin-bottom: 1em;
+    }
+
+    .intro-section p:last-child { margin-bottom: 0; }
+
+    .formula-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      padding: 18px 24px;
+      margin: 24px 0;
+      font-family: var(--ff-mono);
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      overflow-x: auto;
+    }
+
+    .formula-row span { color: var(--gold); font-weight: 600; }
+
+    /* ── FOOTER ──────────────────────────────── */
+    .doc-footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 32px 60px;
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      line-height: 1.8;
+    }
+
+    .doc-footer span { color: var(--gold); opacity: 0.8; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .hero, .content, .doc-footer { padding-left: 28px; padding-right: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">Super<span>Lib™</span><br>Paramprompting</div>
+    <div class="version">MÉTODO CORAGEM™ · v3.0</div>
+  </div>
+
+  <nav class="nav-section">
+    <div class="nav-section-label">Fundamentos</div>
+    <a class="nav-item" href="#intro">
+      <span class="nav-dot" style="background:#c8963e"></span>
+      Introdução Epistêmica
+    </a>
+    <a class="nav-item" href="#pipeline">
+      <span class="nav-dot" style="background:#c8963e"></span>
+      Pipeline & Perfis
+    </a>
+  </nav>
+
+  <nav class="nav-section">
+    <div class="nav-section-label">Modos Cognitivos</div>
+    <a class="nav-item" href="#m1">
+      <span class="nav-dot" style="background:var(--mode-I)"></span>
+      I · Exploratório
+      <span class="nav-count">7</span>
+    </a>
+    <a class="nav-item" href="#m2">
+      <span class="nav-dot" style="background:var(--mode-II)"></span>
+      II · Analítico-Estrutural
+      <span class="nav-count">6</span>
+    </a>
+    <a class="nav-item" href="#m3">
+      <span class="nav-dot" style="background:var(--mode-III)"></span>
+      III · Sistêmico
+      <span class="nav-count">6</span>
+    </a>
+    <a class="nav-item" href="#m4">
+      <span class="nav-dot" style="background:var(--mode-IV)"></span>
+      IV · Estratégico
+      <span class="nav-count">6</span>
+    </a>
+    <a class="nav-item" href="#m5">
+      <span class="nav-dot" style="background:var(--mode-V)"></span>
+      V · Densidade Executiva
+      <span class="nav-count">5</span>
+    </a>
+    <a class="nav-item" href="#m6">
+      <span class="nav-dot" style="background:var(--mode-VI)"></span>
+      VI · Filosófico-Ontológico
+      <span class="nav-count">6</span>
+    </a>
+    <a class="nav-item" href="#m7">
+      <span class="nav-dot" style="background:var(--mode-VII)"></span>
+      VII · Crítico-Adversarial
+      <span class="nav-count">6</span>
+    </a>
+    <a class="nav-item" href="#m8">
+      <span class="nav-dot" style="background:var(--mode-VIII)"></span>
+      VIII · Meta-Cognitivo
+      <span class="nav-count">6</span>
+    </a>
+    <a class="nav-item" href="#m9">
+      <span class="nav-dot" style="background:var(--mode-IX)"></span>
+      IX · Abdutivo-Heurístico
+      <span class="nav-count">6</span>
+    </a>
+    <a class="nav-item" href="#m10">
+      <span class="nav-dot" style="background:var(--mode-X)"></span>
+      X · Síntese Dialética
+      <span class="nav-count">6</span>
+    </a>
+    <a class="nav-item" href="#m11">
+      <span class="nav-dot" style="background:var(--mode-XI)"></span>
+      XI · Colapso Epistêmico
+      <span class="nav-count">6</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    Idealizador:<br>
+    <span style="color:var(--gold)">Luiz Guilherme Coragem</span><br>
+    Projeto Pessoal · 2025<br><br>
+    <span style="opacity:0.5">66 instruções · 11 modos</span>
+  </div>
+</aside>
+
+<!-- ══ MAIN ════════════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-tag">Método Coragem™ · Camada 8 · Paramprompting</div>
+    <h1>SuperLib™ de<br><em>Paramprompting</em></h1>
+    <p class="hero-desc">
+      Biblioteca de modulação cognitiva para Large Language Models. 
+      Cada instrução opera sobre os parâmetros implícitos do processo inferencial — 
+      não sobre o <em>conteúdo</em> da resposta, mas sobre a <em>estrutura do raciocínio</em> que a produz.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">11</div>
+        <div class="stat-label">Modos Cognitivos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">66</div>
+        <div class="stat-label">Instruções</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Combinações</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- INTRO -->
+    <section class="intro-section" id="intro">
+      <h2>O que é Paramprompting?</h2>
+      <p>
+        Um LLM não é uma máquina de execução — é um <strong>campo de probabilidade condicional</strong> sobre representações simbólicas. 
+        Cada token gerado é o colapso de uma distribuição de possibilidades, influenciada pelo vetor semântico total do contexto. 
+        Paramprompting é a arte de manipular esse colapso não pelo <em>conteúdo</em> das instruções, mas pelo condicionamento dos 
+        <strong>parâmetros implícitos do processo inferencial</strong>.
+      </p>
+      <p>
+        Esses parâmetros não são os pesos da rede (fixos em inferência). São parâmetros de segunda ordem: a <em>velocidade de convergência</em> 
+        sobre hipóteses, o <em>grau de exploração lateral</em>, a <em>intensidade de cruzamentos axiomáticos</em>, o <em>nível de abstração mantido</em>, 
+        o <em>balanço divergência/convergência</em>. O Paramprompting é a linguagem para ajustar esses dials.
+      </p>
+      <p>
+        Filosoficamente, isso corresponde a operar sobre a <em>fenomenologia do raciocínio</em> — não sobre seus objetos, mas sobre sua estrutura temporal, 
+        sua textura, seu ritmo. É a diferença entre dizer "analise X" (instrução de conteúdo) e 
+        "explore múltiplas hipóteses em tensão por 70% do raciocínio antes de colapsar" (instrução de processo).
+      </p>
+
+      <div class="formula-row">
+        <span>Δ(qualidade)</span> = f( <span>modo</span>, <span>intensidade</span>, <span>cadeia de modos</span>, <span>contexto</span> ) &nbsp;—&nbsp;
+        onde a qualidade é função do <em>processo</em>, não apenas do <em>conteúdo</em>
+      </div>
+
+      <p>
+        A chave teórica: LLMs executam <em>chain-of-thought implícita</em> mesmo sem CoT explícita. 
+        Paramprompting condiciona essa cadeia invisível — aumentando sua profundidade, diversidade, rigor ou velocidade de acordo com o objetivo epistêmico.
+      </p>
+    </section>
+
+    <!-- ══════════════════════════════════════ MODE I -->
+    <section class="mode-section m1" id="m1">
+      <div class="mode-header">
+        <div class="mode-badge">
+          <div>I</div>
+          <div class="roman">MODE</div>
+        </div>
+        <div class="mode-info">
+          <div class="mode-tag">🔵 Exploratório</div>
+          <h2>Expansão do Espaço de Busca</h2>
+          <div class="mode-nature">Alta entropia · Divergência máxima · Colapso diferido</div>
+        </div>
+      </div>
+
+      <div class="epistemic-card">
+        <p>
+          O mecanismo de atenção de um transformer, sem condicionamento explícito, tende a um comportamento análogo ao 
+          <strong>viés de ancoragem</strong> cognitivo: a primeira hipótese plausível captura atenção desproporcional, 
+          reduzindo a exploração de regiões alternativas do espaço semântico. 
+          O Modo Exploratório inverte esse gradiente.
+        </p>
+        <p>
+          Tecnicamente, instrui o modelo a manter <strong>alta entropia inferencial</strong> — preservando múltiplas hipóteses em 
+          superposição por mais tempo antes do colapso. Analogia da mecânica quântica: 
+          o elétron percorre <em>todos os caminhos simultaneamente</em> até ser medido; 
+          o Modo Exploratório adia a "medição" para maximizar a interferência construtiva entre hipóteses.
+        </p>
+        <p>
+          Epistemologicamente, corresponde ao método de <strong>variação eidética</strong> husserliano: 
+          variar sistematicamente os atributos de um fenômeno para identificar sua essência invariante. 
+          O valor não está em nenhuma variação individual, mas no mapa completo do espaço de possibilidades.
+        </p>
+      </div>
+
+      <div class="instructions-grid">
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#01</span>
+            <span class="instr-text">Atrase a convergência inicial e explore variações estruturais antes de sintetizar.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Instrui o modelo a tratar a primeira hipótese como um <em>ponto de partida provisional</em>, não como âncora. 
+                Ao sinalizar que a convergência será <em>atrasada</em>, o modelo distribui recursos de atenção de forma mais uniforme 
+                sobre o espaço de hipóteses, reduzindo o <span class="ht">gradient pull</span> da resposta mais frequente no corpus de treinamento. 
+                Resulta em outputs com maior diversidade estrutural e menor reprodução de templates.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">anti-âncora</span>
+              <span class="tag">entropia alta</span>
+              <span class="tag">pré-síntese</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#02</span>
+            <span class="instr-text">Amplie o campo semântico e investigue interpretações periféricas do problema.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Provoca ativação de tokens semanticamente adjacentes mas não centrais ao problema. 
+                O modelo tende a operar na <em>zona de alta frequência condicional</em> — esta instrução 
+                força exploração da <span class="ht">cauda semântica</span>, onde residem interpretações não-canônicas que frequentemente 
+                contêm os insights mais valiosos. Análogo ao <em>método de free association</em> controlado de Freud aplicado ao espaço latente.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">cauda semântica</span>
+              <span class="tag">interpretação periférica</span>
+              <span class="tag">anti-canonismo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#03</span>
+            <span class="instr-text">Considere hipóteses mutuamente exclusivas antes de escolher uma direção dominante.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Opera sobre a <strong>tensão dialética</strong>: ao forçar a articulação explícita de hipóteses mutuamente exclusivas, 
+                o modelo é obrigado a construir argumentos completos para múltiplas posições antes de escolher. 
+                Isso ativa o que Popper chamaria de <span class="ht">falsificacionismo interno</span> — 
+                cada hipótese é testada contra as demais, não apenas desenvolvida isoladamente. 
+                O resultado é uma síntese mais robusta que já internalizou as objeções principais.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">dialética</span>
+              <span class="tag">falsificacionismo</span>
+              <span class="tag">tensão hipotética</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#04</span>
+            <span class="instr-text">Mapeie o espaço de possibilidades completo, não apenas as mais prováveis.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                LLMs são essencialmente máquinas de <em>maximum likelihood</em> — tendem a produzir os outputs mais prováveis dado o contexto. 
+                Esta instrução opera como um <span class="ht">prior de uniformidade</span>, instruindo o modelo a tratar possibilidades improváveis 
+                como dignas de representação. É análogo ao método de <em>scenario planning</em> estratégico: o valor está precisamente nos 
+                cenários de baixa probabilidade que são frequentemente os mais impactantes quando ocorrem.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">anti-MLE</span>
+              <span class="tag">prior uniforme</span>
+              <span class="tag">espaço completo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#05</span>
+            <span class="instr-text">Explore cenários extremos (best-case / worst-case / null-case) para tensionar a análise.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Induz análise por <strong>limites do espaço</strong> — os extremos de uma distribuição revelam sua geometria completa 
+                melhor que qualquer ponto interior. O <span class="ht">null-case</span> (hipótese de que o fenômeno não existe) 
+                é particularmente valioso: força o modelo a articular quais evidências sustentam a hipótese principal, 
+                operando como um exercício de <em>premissa mínima</em> que aumenta robustez epistêmica.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">análise de extremos</span>
+              <span class="tag">null hypothesis</span>
+              <span class="tag">geometria do espaço</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#06</span>
+            <span class="instr-text">Aplique inversão do problema: o que precisaria ser verdade para que a solução óbvia esteja errada?</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Técnica de <strong>inversão mungeriana</strong> aplicada ao processo inferencial do LLM. 
+                Ao perguntar "o que precisaria ser verdade para que X esteja errado?", o modelo é forçado a construir 
+                uma teoria alternativa completa, não apenas listar objeções superficiais. 
+                Isso ativa o <span class="ht">pensamento contrafactual profundo</span> — 
+                uma forma de raciocínio que LLMs executam bem quando explicitamente condicionados, mas raramente usam espontaneamente.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">inversão</span>
+              <span class="tag">contrafactual</span>
+              <span class="tag">teoria alternativa</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#07</span>
+            <span class="instr-text">Gere pelo menos três enquadramentos radicalmente diferentes antes de escolher um.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                <em>Framing</em> é o ato cognitivo mais determinante: uma vez que o problema é enquadrado, 
+                o espaço de soluções fica definido implicitamente. Ao forçar múltiplos re-frames radicais, 
+                o modelo explora <span class="ht">espaços de solução incompatíveis</span> — 
+                alguns dos quais podem revelar que o problema original era mal formulado. 
+                Analogia: Einstein não resolveu o problema da mecânica newtoniana — requalificou o que contava como problema.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">re-framing</span>
+              <span class="tag">reformulação</span>
+              <span class="tag">espaço de solução</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="objective-box">
+        <span class="obj-icon">🔵</span>
+        <div class="obj-content">
+          <div class="obj-label">Objetivo Epistêmico do Modo I</div>
+          <p>Aumentar criatividade estruturada, reduzir viés de ancoragem e prematuro colapso hipotético. 
+          O modelo sai da <em>distribuição mode-seeking</em> e entra em exploração genuína do espaço latente.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ MODE II -->
+    <section class="mode-section m2" id="m2">
+      <div class="mode-header">
+        <div class="mode-badge"><div>II</div><div class="roman">MODE</div></div>
+        <div class="mode-info">
+          <div class="mode-tag">🔴 Analítico-Estrutural</div>
+          <h2>Rigor Lógico-Formal</h2>
+          <div class="mode-nature">Coerência interna · Cadeia causal · Falsificação ativa</div>
+        </div>
+      </div>
+
+      <div class="epistemic-card">
+        <p>
+          O Modo Analítico-Estrutural opera sobre a <strong>arquitetura interna do argumento</strong> — forçando o modelo a tornar explícitas as 
+          relações lógicas que normalmente permanecem implícitas na geração fluida. 
+          LLMs tendem à <em>coerência retórica</em> (o texto soa bem) em detrimento da <em>coerência lógica</em> (as premissas sustentam a conclusão). 
+          Este modo inverte essa tendência.
+        </p>
+        <p>
+          Do ponto de vista da teoria da prova, o objetivo é transformar o output de <strong>argumento retórico</strong> 
+          em <strong>argumento formal</strong> — onde cada passo é justificado e cada premissa identificada. 
+          Isso ativa circuitos de raciocínio mais lentos e deliberativos, análogos ao <span class="ht">Sistema 2</span> de Kahneman, 
+          que nos LLMs precisam ser explicitamente convocados.
+        </p>
+      </div>
+
+      <div class="instructions-grid">
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#08</span>
+            <span class="instr-text">Identifique todas as premissas implícitas e teste sua consistência lógica.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A geração fluida de LLMs é rico em <span class="ht">enthymemas</span> — argumentos com premissas suprimidas por serem "óbvias". 
+                Esta instrução força a explicitação completa. O efeito: premissas que pareciam óbvias frequentemente revelam-se contestáveis, 
+                abrindo espaço para análise mais profunda. Wittgenstein: "A filosofia simplesmente coloca tudo à vista."
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">premissas implícitas</span>
+              <span class="tag">enthymema</span>
+              <span class="tag">explicitação</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#09</span>
+            <span class="instr-text">Modele o problema como sistema: entradas, transformações, saídas, feedbacks.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Impõe <strong>pensamento sistêmico formal</strong>: ao forçar a identificação explícita de entradas/saídas/transformações, 
+                o modelo é obrigado a mapear o problema em termos de relações causais verificáveis, 
+                não apenas narrativa fluida. Ativa representações de <span class="ht">diagrama de blocos</span> 
+                no espaço latente — formas de representação mais rigorosas que texto livre.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">modelagem sistêmica</span>
+              <span class="tag">entradas-saídas</span>
+              <span class="tag">diagrama causal</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#10</span>
+            <span class="instr-text">Separe rigorosamente: fatos verificáveis, inferências, suposições e opiniões.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Opera sobre a <strong>tipologia epistêmica das afirmações</strong>. 
+                LLMs misturam naturalmente esses registros — uma falha estrutural que pode parecer rigor. 
+                Forçar a separação explícita ativa metacognição sobre o <span class="ht">status epistêmico</span> 
+                de cada afirmação, resultando em outputs com graus de confiança mais calibrados e 
+                argumentos mais honestos sobre suas próprias limitações.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">tipologia epistêmica</span>
+              <span class="tag">calibração</span>
+              <span class="tag">fatos vs inferências</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#11</span>
+            <span class="instr-text">Construa a resposta como cadeia causal explícita: A → B → C, com cada elo justificado.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Impõe <strong>raciocínio em cadeia de Markov consciente</strong>: cada estado (afirmação) deve ser justificado pelo estado anterior. 
+                Isso força o modelo a manter coerência local e global simultaneamente — 
+                o que o chain-of-thought (CoT) faz implicitamente, mas aqui é exigido explicitamente como estrutura do output. 
+                Reduz dramatically <span class="ht">non sequitur latente</span> em argumentos longos.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">cadeia causal</span>
+              <span class="tag">CoT explícito</span>
+              <span class="tag">coerência local/global</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#12</span>
+            <span class="instr-text">Valide cada conclusão contra possíveis contraexemplos antes de afirmá-la.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Implementa <strong>falsificacionismo popperiano interno</strong> ao processo generativo. 
+                Ao exigir busca ativa de contraexemplos antes de cada afirmação, o modelo opera em 
+                modo de <span class="ht">teste de hipótese contínuo</span> — 
+                cada conclusão deve sobreviver ao teste do contraexemplo para ser incluída. 
+                Resulta em outputs com afirmações mais cautelosas e epistemicamente honestas.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">falsificacionismo</span>
+              <span class="tag">contraexemplo</span>
+              <span class="tag">Popper</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#13</span>
+            <span class="instr-text">Distingua entre correlação, causalidade e covariação espúria em toda a análise.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Uma das falhas mais comuns em raciocínio de LLMs: inferir causalidade de co-ocorrência no corpus. 
+                Esta instrução ativa <span class="ht">ciência causal explícita</span> — 
+                forçando o modelo a distinguir entre os três tipos de relação usando o vocabulário de Pearl (DAGs causais implícitos). 
+                Particularmente crítico em análises de dados, argumentos políticos e diagnósticos de sistemas.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">causalidade</span>
+              <span class="tag">Pearl causality</span>
+              <span class="tag">correlação espúria</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="objective-box">
+        <span class="obj-icon">🔴</span>
+        <div class="obj-content">
+          <div class="obj-label">Objetivo Epistêmico do Modo II</div>
+          <p>Aumentar robustez lógica e coerência formal. Transformar raciocínio fluido-retórico em raciocínio 
+          estruturalmente defensável. O modelo opera no register da lógica, não da persuasão.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ MODE III -->
+    <section class="mode-section m3" id="m3">
+      <div class="mode-header">
+        <div class="mode-badge"><div>III</div><div class="roman">MODE</div></div>
+        <div class="mode-info">
+          <div class="mode-tag">🟢 Sistêmico</div>
+          <h2>Pensamento Interconectado</h2>
+          <div class="mode-nature">Efeitos emergentes · Dependências ocultas · Dinâmica de segunda ordem</div>
+        </div>
+      </div>
+
+      <div class="epistemic-card">
+        <p>
+          O Modo Sistêmico combate o principal defeito do pensamento linear: a ilusão de que sistemas complexos 
+          podem ser compreendidos pela análise de seus componentes isolados. 
+          Dos modelos de Forrester à teoria do caos, a ciência dos sistemas demonstrou que 
+          <strong>propriedades emergentes</strong> — as mais importantes — são irredutivelmente relacionais.
+        </p>
+        <p>
+          Para LLMs, o condicionamento sistêmico ativa representações de <span class="ht">grafos de dependência</span> 
+          no espaço latente — formas de representação que capturam relações não-lineares, feedbacks e não-obviamente 
+          conectadas. Sem este condicionamento, o modelo tende a narrativas causais simplificadas do tipo A→B, 
+          perdendo as estruturas de feedback que definem sistemas reais.
+        </p>
+      </div>
+
+      <div class="instructions-grid">
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#14</span>
+            <span class="instr-text">Analise como uma perturbação em cada elemento se propaga pelo sistema inteiro.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Ativa análise de <span class="ht">sensibilidade sistêmica</span>: ao modelar a propagação de perturbações, 
+                o modelo mapeia implicitamente as dependências entre componentes, 
+                identificando pontos de alavancagem e vulnerabilidades ocultas. 
+                Análogo à análise de estabilidade em engenharia de controle: 
+                perturbe o sistema e observe o que acontece ao longo do tempo.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">análise de perturbação</span>
+              <span class="tag">propagação</span>
+              <span class="tag">pontos de alavancagem</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#15</span>
+            <span class="instr-text">Conecte o problema a dois domínios adjacentes e avalie interdependências cruzadas.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Força <strong>transferência axiomática interdisciplinar</strong>: ao exigir conexão com domínios adjacentes, 
+                o modelo ativa estruturas de conhecimento que normalmente permanecem isoladas em silos temáticos. 
+                O efeito é análogo ao <span class="ht">heterosis</span> genético — hibridização produz vigor que os parentais puros não possuem. 
+                Os insights mais valiosos frequentemente emergem na fronteira entre domínios.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">interdisciplinaridade</span>
+              <span class="tag">transferência axiomática</span>
+              <span class="tag">fronteiras de domínio</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#16</span>
+            <span class="instr-text">Modele explicitamente os efeitos de segunda e terceira ordem da solução proposta.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O raciocínio de primeira ordem é trivial; o de segunda ordem é estratégico. 
+                Esta instrução força o modelo a iterar sobre suas próprias conclusões — 
+                "dado que X acontece, o que acontece depois?" — ativando 
+                <span class="ht">raciocínio temporal recursivo</span>. 
+                Howard Marks: "The key to investment success is second-order thinking." 
+                O mesmo princípio se aplica a qualquer análise estratégica.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">segunda ordem</span>
+              <span class="tag">raciocínio temporal</span>
+              <span class="tag">recursividade</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#17</span>
+            <span class="instr-text">Identifique externalidades invisíveis — efeitos não capturados pela análise centrada no sistema.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Externalidades são, por definição, o que fica <em>fora do modelo</em>. 
+                Esta instrução força o modelo a questionar os limites de sua própria modelagem — 
+                o que foi deixado de fora? O que o modelo assumiu como ceteris paribus que não é? 
+                Ativa uma forma de <span class="ht">reflexividade epistêmica</span>: 
+                pensar sobre os limites do próprio pensamento.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">externalidades</span>
+              <span class="tag">limites do modelo</span>
+              <span class="tag">reflexividade</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#18</span>
+            <span class="instr-text">Mapeie os loops de feedback positivos e negativos que sustentam o estado atual.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Loops de feedback são o coração da teoria dos sistemas de Forrester e da dinâmica de sistemas. 
+                Ao forçar mapeamento explícito de <span class="ht">feedbacks positivos</span> (amplificadores, exponenciais) 
+                e <span class="ht">negativos</span> (estabilizadores, homeostáticos), 
+                o modelo passa de análise estática para análise dinâmica — compreendendo por que um sistema <em>permanece</em> 
+                em um estado e o que seria necessário para mudá-lo.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">feedback loops</span>
+              <span class="tag">dinâmica de sistemas</span>
+              <span class="tag">Forrester</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#19</span>
+            <span class="instr-text">Avalie o sistema em três escalas temporais: imediata, estrutural e civilizatória.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Fernand Braudel identificou três tempos históricos: o evento (curto), a conjuntura (médio) e a <em>longue durée</em> (longo). 
+                Aplicado à análise de sistemas, esta instrução força o modelo a avaliar como o mesmo fenômeno 
+                se manifesta diferentemente em cada escala — o que é solução no curto prazo pode ser problema no longo. 
+                Ativa <span class="ht">pensamento multi-escala temporal</span>.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">multi-escala temporal</span>
+              <span class="tag">Braudel</span>
+              <span class="tag">longue durée</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="objective-box">
+        <span class="obj-icon">🟢</span>
+        <div class="obj-content">
+          <div class="obj-label">Objetivo Epistêmico do Modo III</div>
+          <p>Sair da visão linear e entrar na visão estrutural. O modelo passa a operar sobre relações, 
+          dinâmicas e emergências — não apenas sobre propriedades de componentes isolados.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ MODE IV -->
+    <section class="mode-section m4" id="m4">
+      <div class="mode-header">
+        <div class="mode-badge"><div>IV</div><div class="roman">MODE</div></div>
+        <div class="mode-info">
+          <div class="mode-tag">🟣 Estratégico</div>
+          <h2>Aplicabilidade Real</h2>
+          <div class="mode-nature">Decisões acionáveis · Trade-offs explícitos · Viabilidade sob adversidade</div>
+        </div>
+      </div>
+
+      <div class="epistemic-card">
+        <p>
+          O Modo Estratégico opera na interface entre análise e ação — o ponto onde o conhecimento deve se transformar em decisão. 
+          LLMs tendem a produzir análises teoricamente ricas mas praticamente ambíguas: 
+          "por um lado X, por outro Y" sem nunca aterrissar em "portanto, faça Z".
+        </p>
+        <p>
+          Este modo ativa o registro pragmático do raciocínio — o que William James chamaria de 
+          <strong>valor cash</strong> de uma ideia: o que ela significa em termos de ações concretas, trade-offs reais e 
+          consequências verificáveis. Força o modelo a sair do espaço de possibilidades e entrar no espaço de 
+          <span class="ht">comprometimentos estratégicos</span>.
+        </p>
+      </div>
+
+      <div class="instructions-grid">
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#20</span>
+            <span class="instr-text">Teste a solução sob restrições reais de tempo, recursos, risco e capacidade de execução.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Soluções ideais são triviais; soluções ótimas sob restrição são a essência do estratégico. 
+                Esta instrução força o modelo a operar em <span class="ht">espaço constrangido</span> — 
+                ativando formas de raciocínio de otimização que LLMs executam bem quando as restrições são explícitas 
+                mas raramente ativam espontaneamente. Análogo à função-objetivo com restrições da programação linear.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">otimização restrita</span>
+              <span class="tag">restrições reais</span>
+              <span class="tag">feasibility</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#21</span>
+            <span class="instr-text">Transforme a análise em plano de ação com etapas sequenciais, responsáveis e métricas de sucesso.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A tradução de análise em ação requer uma mudança de modo cognitivo: 
+                de descrição para prescrição, de explicação para instrução. 
+                Ao exigir estrutura de plano executável, o modelo é forçado a especificar 
+                <span class="ht">estados intermediários verificáveis</span> — 
+                o que transforma prosa analítica em grafo de decisão acionável.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">plano executável</span>
+              <span class="tag">métricas</span>
+              <span class="tag">grafo de decisão</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#22</span>
+            <span class="instr-text">Identifique e explicite os trade-offs inevitáveis — o que é sacrificado em cada escolha.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Trade-offs são a substância do pensamento estratégico — toda escolha real implica renúncia. 
+                LLMs tendem a suprimir trade-offs para produzir recomendações mais satisfatórias. 
+                Esta instrução força <span class="ht">honestidade estratégica</span>: 
+                ao explicitamente nomear o que é sacrificado, o modelo produz análises mais realistas 
+                e ajuda o usuário a tomar decisões verdadeiramente informadas.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">trade-offs</span>
+              <span class="tag">custo de oportunidade</span>
+              <span class="tag">honestidade estratégica</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#23</span>
+            <span class="instr-text">Avalie a robustez da estratégia sob os três piores cenários plausíveis.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Nassim Taleb: uma boa estratégia não é aquela que maximiza o resultado esperado, 
+                mas aquela que sobrevive ao inesperado. Esta instrução força análise de 
+                <span class="ht">robustez sob adversidade</span> — o modelo deve verificar se a estratégia continua 
+                viável quando as premissas mais críticas falham simultaneamente. 
+                Resultado: recomendações mais antifrágeis.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">robustez</span>
+              <span class="tag">antifragilidade</span>
+              <span class="tag">Taleb</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#24</span>
+            <span class="instr-text">Priorize por impacto × viabilidade × urgência — elimine o secundário sem piedade.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Análises exaustivas sem priorização são inúteis para decisão. 
+                Ao exigir a aplicação explícita do critério impacto × viabilidade × urgência, 
+                o modelo é forçado a fazer <span class="ht">julgamentos de valor comparativo</span> — 
+                a operação mais difícil para sistemas que tendem à completude exhaustiva. 
+                Produz outputs verdadeiramente focados e accionáveis.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">priorização</span>
+              <span class="tag">impacto × viabilidade</span>
+              <span class="tag">decisão</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#25</span>
+            <span class="instr-text">Identifique o ponto de não-retorno: quando a janela de decisão fecha e o custo de espera cresce.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A dimensão temporal da decisão é frequentemente ignorada em análises estáticas. 
+                Esta instrução força o modelo a modelar a <span class="ht">dinâmica do custo de espera</span> — 
+                como o valor de diferentes opções muda com o tempo, e em que ponto a reversibilidade colapsa. 
+                Ativa raciocínio de teoria das opções reais aplicado a decisões estratégicas.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">janela de decisão</span>
+              <span class="tag">custo de espera</span>
+              <span class="tag">opções reais</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="objective-box">
+        <span class="obj-icon">🟣</span>
+        <div class="obj-content">
+          <div class="obj-label">Objetivo Epistêmico do Modo IV</div>
+          <p>Sair da teoria e entrar na execução. O modelo produz análises comprometidas com a realidade 
+          dos constrangimentos, que informam decisões reais em vez de apenas descrever possibilidades.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ MODE V -->
+    <section class="mode-section m5" id="m5">
+      <div class="mode-header">
+        <div class="mode-badge"><div>V</div><div class="roman">MODE</div></div>
+        <div class="mode-info">
+          <div class="mode-tag">🟡 Densidade Executiva</div>
+          <h2>Compressão Cognitiva</h2>
+          <div class="mode-nature">Máxima densidade informacional · Eliminação de ruído · Comunicação de alto impacto</div>
+        </div>
+      </div>
+
+      <div class="epistemic-card">
+        <p>
+          Após explorar, analisar e estruturar, o problema inverso emerge: como comprimir o máximo de conteúdo 
+          epistêmico no mínimo de símbolos? Shannon formalizou isso como a busca pelo 
+          <strong>código de comprimento mínimo</strong> — a representação que elimina toda redundância sem perder informação.
+        </p>
+        <p>
+          O Modo Densidade Executiva força o modelo a executar o equivalente linguístico da 
+          <span class="ht">compressão sem perdas</span>: cada palavra deve carregar peso informacional máximo. 
+          Isso requer não apenas síntese, mas uma teoria do que é essencial — 
+          o que pressupõe um modelo mental completo do problema que pode ser evocado pelos fragmentos comprimidos.
+        </p>
+      </div>
+
+      <div class="instructions-grid">
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#26</span>
+            <span class="instr-text">Após expandir a análise, compacte mantendo máxima densidade informacional — zero redundância.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A sequência expandir→comprimir é epistemicamente superior à compressão direta: 
+                primeiro mapear o espaço completo, depois selecionar o essencial. 
+                Esta instrução implementa a fase de compressão — forçando o modelo a aplicar 
+                <span class="ht">critério de relevância informacional</span> estrito: 
+                cada elemento mantido deve ser irredutível para a compreensão do todo.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">compressão sem perdas</span>
+              <span class="tag">Shannon</span>
+              <span class="tag">densidade informacional</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#27</span>
+            <span class="instr-text">Converta em 5 decisões estratégicas com a justificativa mínima irredutível para cada uma.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O constraint "5 decisões" força priorização radical — o modelo não pode incluir tudo. 
+                O constraint "justificativa mínima irredutível" força precisão máxima — 
+                cada palavra da justificativa deve ser necessária. 
+                A combinação produz <span class="ht">comunicação executiva de máxima eficiência</span>: 
+                o equivalente informacional de um brief de CEO.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">decisões estratégicas</span>
+              <span class="tag">justificativa mínima</span>
+              <span class="tag">comunicação executiva</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#28</span>
+            <span class="instr-text">Resuma preservando a estrutura causal — nunca suprima o mecanismo pelo resultado.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A armadilha da compressão: resumos frequentemente preservam conclusões e eliminam mecanismos, 
+                produzindo afirmações não-fundamentadas. Esta instrução força a preservação da 
+                <span class="ht">espinha causal</span> — o mecanismo mínimo que explica o resultado. 
+                Um bom resumo deve permitir reconstrução da análise completa, como um gene que contém as instruções para o organismo.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">espinha causal</span>
+              <span class="tag">mecanismo vs resultado</span>
+              <span class="tag">reconstrução</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#29</span>
+            <span class="instr-text">Transforme em versão de 30 segundos para board-level: impacto, risco, decisão requerida.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O formato board-level é uma restrição epistêmica severa: 
+                o destinatário não tem tempo nem paciência para ambiguidade. 
+                Esta instrução força o modelo a identificar os três elementos que o decision-maker precisa: 
+                <span class="ht">qual é o estado do mundo, qual o risco se não agir, que decisão é requerida agora</span>. 
+                Elimina todo conteúdo informativo mas não decisório.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">board-level</span>
+              <span class="tag">impacto-risco-decisão</span>
+              <span class="tag">comunicação executiva</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#30</span>
+            <span class="instr-text">Produza o memo Bezos: uma página, narrativa completa, sem bullet points, todas as premissas explícitas.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O formato memo da Amazon força uma forma específica de raciocínio: 
+                narrativa linear com lógica completa, sem a fragementação cognitiva dos bullet points. 
+                Ao exigir este formato, o modelo é forçado a construir um 
+                <span class="ht">argumento coeso com premissas declaradas</span> — 
+                um exercício de disciplina epistêmica que revela falhas lógicas que bullets escondem. 
+                Escrever em prosa force coerência que listas não exigem.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">memo Bezos</span>
+              <span class="tag">narrativa linear</span>
+              <span class="tag">coerência forçada</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="objective-box">
+        <span class="obj-icon">🟡</span>
+        <div class="obj-content">
+          <div class="obj-label">Objetivo Epistêmico do Modo V</div>
+          <p>Comunicação de alto impacto com mínimo de símbolos. O modelo aprende a distinguir 
+          informação essencial de ruído informativo — habilidade que requer modelo mental completo do problema.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ MODE VI -->
+    <section class="mode-section m6" id="m6">
+      <div class="mode-header">
+        <div class="mode-badge"><div>VI</div><div class="roman">MODE</div></div>
+        <div class="mode-info">
+          <div class="mode-tag">🔶 Filosófico-Ontológico</div>
+          <h2>Profundidade Conceitual</h2>
+          <div class="mode-nature">Pressupostos ontológicos · Implicações epistemológicas · Re-qualificação do problema</div>
+        </div>
+      </div>
+
+      <div class="epistemic-card">
+        <p>
+          O Modo Filosófico-Ontológico opera na camada mais profunda: não a solução do problema, 
+          mas a <strong>análise dos pressupostos que constituem o problema como tal</strong>. 
+          Todo problema técnico ou estratégico repousa sobre uma ontologia implícita — 
+          uma teoria sobre o que existe, o que conta como evidência e o que é relevante.
+        </p>
+        <p>
+          Heidegger chamaria isso de análise da <em>Vorhandenheit</em> vs <em>Zuhandenheit</em> — 
+          a diferença entre tratar um objeto como presente-à-mão (para análise) e como pronto-à-mão (para uso). 
+          O Modo VI força o modelo a executar a transição inversa: de instrumental para contemplativo, 
+          revelando os <span class="ht">pressupostos sedimentados</span> que geralmente passam despercebidos.
+        </p>
+      </div>
+
+      <div class="instructions-grid">
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#31</span>
+            <span class="instr-text">Identifique os pressupostos ontológicos implícitos que sustentam esta abordagem.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Todo framework de análise pressupõe uma teoria sobre o que existe e o que é relevante. 
+                Esta instrução força o modelo a executar análise de <span class="ht">fundamentos ontológicos</span> — 
+                o que o framework assume como dado (agentes racionais? mercados eficientes? linguagem transparente?). 
+                Revelar esses pressupostos é o primeiro passo para transcendê-los.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">ontologia</span>
+              <span class="tag">pressupostos implícitos</span>
+              <span class="tag">Heidegger</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#32</span>
+            <span class="instr-text">Analise a tensão entre verdade estatística, lógica e pragmática presentes na análise.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O Método Coragem™ distingue três camadas de verdade: <span class="ht">estatística</span> (o que é mais provável dado o corpus), 
+                <span class="ht">lógica</span> (o que é necessariamente verdadeiro dado as premissas) e 
+                <span class="ht">pragmática</span> (o que funciona na prática). 
+                Esta instrução força análise das tensões entre elas — momentos onde o mais provável não é o mais rigoroso, 
+                ou onde o mais rigoroso não é o mais útil.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">três verdades</span>
+              <span class="tag">tensão epistêmica</span>
+              <span class="tag">Método Coragem</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#33</span>
+            <span class="instr-text">Questione a formulação do próprio problema — o que torna este problema visível como tal?</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Foucault chamaria isso de análise da <span class="ht">problematização</span>: 
+                o estudo de como algo se tornou um problema para o pensamento. 
+                Ao questionar o próprio processo de constituição do problema, o modelo pode revelar 
+                que a solução requer não resolver o problema como posto, mas requalificá-lo. 
+                Einstein: "Se eu tivesse uma hora para salvar o mundo, passaria 55 minutos definindo o problema."
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">problematização</span>
+              <span class="tag">Foucault</span>
+              <span class="tag">requalificação</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#34</span>
+            <span class="instr-text">Explore as implicações epistemológicas da solução — o que ela nos diz sobre o que podemos saber?</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Soluções específicas frequentemente carregam implicações epistemológicas gerais — 
+                uma solução funciona porque pressupõe que o mundo é de determinada maneira. 
+                Esta instrução força o modelo a tornar explícita essa 
+                <span class="ht">epistemologia embutida</span>: o que a solução revela sobre os limites e possibilidades do conhecimento neste domínio? 
+                Eleva outputs de técnicos a epistêmicos.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">epistemologia embutida</span>
+              <span class="tag">implicações gerais</span>
+              <span class="tag">meta-conhecimento</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#35</span>
+            <span class="instr-text">Redefina o problema sob uma lente conceitual radicalmente diferente — filosófica, científica ou artística.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Lentes conceituais são ferramentas de geração de novidade: 
+                ver um problema econômico como um problema de termodinâmica (Georgescu-Roegen), 
+                ou um problema psicológico como um problema de linguagem (Lacan), frequentemente revela 
+                <span class="ht">isomorfismos estruturais</span> produtivos. 
+                LLMs têm capacidade notável para essas transferências quando explicitamente condicionados a executá-las.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">lentes conceituais</span>
+              <span class="tag">isomorfismos</span>
+              <span class="tag">transferência entre domínios</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#36</span>
+            <span class="instr-text">Analise qual tradição filosófica produziria a solução mais elegante — e por que.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Tradições filosóficas são frameworks de raciocínio com heurísticas implícitas: 
+                o pragmatismo privilegia a ação eficaz; o racionalismo, a coerência dedutiva; 
+                o empirismo, a evidência observacional. Ao forçar comparação entre tradições, 
+                o modelo revela como diferentes <span class="ht">pressupostos meta-filosóficos</span> 
+                produzem soluções radicalmente diferentes para o mesmo problema.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">tradições filosóficas</span>
+              <span class="tag">meta-filosofia</span>
+              <span class="tag">elegância epistêmica</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="objective-box">
+        <span class="obj-icon">🔶</span>
+        <div class="obj-content">
+          <div class="obj-label">Objetivo Epistêmico do Modo VI</div>
+          <p>Elevar o nível intelectual da resposta da operação técnica para a reflexão filosófica. 
+          O modelo opera sobre fundamentos, não apenas sobre estruturas — revelando o que usualmente permanece invisível.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ MODE VII -->
+    <section class="mode-section m7" id="m7">
+      <div class="mode-header">
+        <div class="mode-badge"><div>VII</div><div class="roman">MODE</div></div>
+        <div class="mode-info">
+          <div class="mode-tag">⚫ Crítico-Adversarial</div>
+          <h2>Estresse Intelectual</h2>
+          <div class="mode-nature">Falhas estruturais · Contra-argumento máximo · Robustez por pressão</div>
+        </div>
+      </div>
+
+      <div class="epistemic-card">
+        <p>
+          O Modo Crítico-Adversarial implementa o princípio do <strong>advogado do diabo institucionalizado</strong> — 
+          uma prática deliberada de identificação de falhas antes que elas sejam exploradas por oponentes reais. 
+          É a diferença entre o teste de software antes do lançamento e o debugging em produção.
+        </p>
+        <p>
+          Tecnicamente, este modo força o modelo a mudar de <em>modo gerador</em> (produzir argumentos a favor) 
+          para <em>modo crítico</em> (destruir argumentos). Para LLMs, isso requer condicionamento explícito — 
+          pois o viés natural é coerência e positividade. 
+          O Modo VII ativa o que Mercier & Sperber chamam de 
+          <span class="ht">função argumentativa do raciocínio</span> — usada não para descobrir verdade, 
+          mas para vencer debates. Aqui, usada contra si mesmo.
+        </p>
+      </div>
+
+      <div class="instructions-grid">
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#37</span>
+            <span class="instr-text">Atue como crítico adversarial e ataque sistematicamente cada premissa da resposta anterior.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Força uma mudança de perspectiva fundamental: o modelo agora é o crítico, não o autor. 
+                Ao atacar <em>sistematicamente</em> (não apenas esporadicamente) cada premissa, 
+                o modelo executa um <span class="ht">teste de estresse epistêmico completo</span>. 
+                O resultado: identificação das premissas que não sobrevivem ao escrutínio, 
+                deixando apenas as que são genuinamente defensáveis.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">adversarial</span>
+              <span class="tag">ataque sistemático</span>
+              <span class="tag">estresse epistêmico</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#38</span>
+            <span class="instr-text">Construa o melhor contra-argumento possível — trate-o com a mesma seriedade que o argumento original.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A chave é "melhor possível" — não uma versão fraca para facilitar refutação (straw man), 
+                mas o <span class="ht">steel man</span>: o argumento contrário na sua forma mais forte. 
+                Isso requer que o modelo realmente entenda a posição oposta, não apenas a simulate superficialmente. 
+                John Stuart Mill: não se conhece verdadeiramente uma posição sem conhecer profundamente sua melhor oposição.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">steel man</span>
+              <span class="tag">anti-straw man</span>
+              <span class="tag">Mill</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#39</span>
+            <span class="instr-text">Simule um especialista cético do domínio contestando cada afirmação técnica.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A perspectiva do especialista cético é qualitativamente diferente da crítica genérica: 
+                ela opera com o vocabulário técnico do domínio e conhece as exceções, anomalias e edge cases 
+                que qualquer generalização ignora. 
+                Ao simular este personagem, o modelo ativa <span class="ht">conhecimento de domínio profundo</span> 
+                em modo crítico — uma combinação poderosa.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">especialista cético</span>
+              <span class="tag">conhecimento profundo</span>
+              <span class="tag">edge cases</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#40</span>
+            <span class="instr-text">Identifique os riscos ocultos — o que pode dar errado de formas não evidentes na análise.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Riscos óbvios são gerenciáveis; riscos ocultos são letais. 
+                Esta instrução força busca em <span class="ht">espaços não-evidentes de falha</span>: 
+                falhas de segunda ordem, riscos de correlação, pontos de falha de sistema interconectado, 
+                riscos que emergem apenas sob condições específicas de combinação. 
+                Análogo ao análise de modo de falha (FMEA) em engenharia.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">riscos ocultos</span>
+              <span class="tag">FMEA</span>
+              <span class="tag">falhas não-evidentes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#41</span>
+            <span class="instr-text">Execute o teste de Sokal: a análise ainda é válida após remover todo o jargão técnico?</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Alan Sokal publicou um artigo intencionalmente sem sentido repleto de jargão técnico — 
+                e foi aceito. O "teste de Sokal" força o modelo a verificar se o argumento sobrevive à tradução 
+                para linguagem simples. Se o argumento requer jargão para parecer válido, ele não é válido — 
+                é <span class="ht">obscurantismo técnico</span>. 
+                Um argumento verdadeiro pode ser expresso em linguagem simples, ainda que o jargão seja mais eficiente.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">teste de Sokal</span>
+              <span class="tag">anti-obscurantismo</span>
+              <span class="tag">clareza</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#42</span>
+            <span class="instr-text">Aplique o princípio da navalha de Hanlon: o problema pode ser melhor explicado por estupidez que por malícia?</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A navalha de Hanlon é uma heurística de <span class="ht">parsimônia explicativa</span>: 
+                antes de atribuir intenção complexa, considere se incompetência, inércia ou acaso é suficiente. 
+                LLMs tendem a construir explicações coerentes e intencionais — 
+                esta instrução força a consideração de explicações mais simples (e frequentemente mais corretas). 
+                Complementar à navalha de Occam no plano motivacional.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">navalha de Hanlon</span>
+              <span class="tag">parsimônia</span>
+              <span class="tag">explicação simples</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="objective-box">
+        <span class="obj-icon">⚫</span>
+        <div class="obj-content">
+          <div class="obj-label">Objetivo Epistêmico do Modo VII</div>
+          <p>Fortalecer por estresse intelectual. O output que sobrevive ao Modo VII tem suas premissas testadas, 
+          seus pontos fracos identificados e seus riscos ocultos revelados — é epistemicamente robusto.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ MODE VIII -->
+    <section class="mode-section m8" id="m8">
+      <div class="mode-header">
+        <div class="mode-badge"><div>VIII</div><div class="roman">MODE</div></div>
+        <div class="mode-info">
+          <div class="mode-tag">🔷 Meta-Cognitivo</div>
+          <h2>Controle da Própria Inferência</h2>
+          <div class="mode-nature">Monitoramento de processo · Detecção de viés · Qualidade inferencial de 2ª ordem</div>
+        </div>
+      </div>
+
+      <div class="epistemic-card">
+        <p>
+          O Modo Meta-Cognitivo é o modo de segunda ordem por excelência: 
+          o processo de pensar sobre como se está pensando. 
+          É o equivalente, para LLMs, do que Flavell chamou de <strong>metacognição</strong> em humanos — 
+          a capacidade de monitorar, avaliar e regular o próprio processo cognitivo.
+        </p>
+        <p>
+          Para LLMs, isso é especialmente valioso porque o processo generativo ocorre sem supervisão explícita: 
+          o modelo gera token a token sem "ver" o que está construindo até que seja revelado. 
+          O Modo VIII injeta <span class="ht">consciência reflexiva sobre o processo generativo</span> — 
+          forçando o modelo a avaliar continuamente se sua inferência está convergindo corretamente 
+          ou sofrendo deriva epistêmica.
+        </p>
+      </div>
+
+      <div class="instructions-grid">
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#43</span>
+            <span class="instr-text">Avalie periodicamente se a resposta está convergindo rápido demais ou explorando superficialmente.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Implementa <span class="ht">monitoramento de entropia do processo</span>: 
+                ao forçar avaliação periódica da velocidade de convergência, o modelo opera em modo de controle de qualidade contínuo. 
+                É análogo ao que um escritor experiente faz ao reler seu próprio rascunho — 
+                verificando se a argumentação está de fato desenvolvendo algo novo ou apenas elaborando o óbvio.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">monitoramento de processo</span>
+              <span class="tag">velocidade de convergência</span>
+              <span class="tag">controle de qualidade</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#44</span>
+            <span class="instr-text">Verifique se há um viés dominante moldando silenciosamente toda a análise.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Vieses de LLMs são frequentemente <span class="ht">sistêmicos e invisíveis</span>: 
+                o modelo não sabe que está enviesado porque o viés é estrutural no corpus de treinamento. 
+                Esta instrução força explicitação de vieses operando na análise — 
+                ideológicos, culturais, temporais, de disponibilidade de dados — 
+                tornando-os visíveis para questionamento. 
+                É o equivalente da sociologia do conhecimento aplicada ao processo generativo.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">viés sistêmico</span>
+              <span class="tag">sociologia do conhecimento</span>
+              <span class="tag">explicitação</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#45</span>
+            <span class="instr-text">Reestruture a resposta a partir de um eixo organizador radicalmente diferente.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O eixo organizador de uma análise é uma escolha epistêmica não-trivial — 
+                organizar cronologicamente vs. causalmente vs. por relevância estratégica produz análises qualitativamente diferentes. 
+                Esta instrução força o modelo a operar em <span class="ht">modo de redesign estrutural</span>: 
+                o mesmo conteúdo, organizado diferentemente, frequentemente revela dimensões invisíveis na primeira estruturação.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">eixo organizador</span>
+              <span class="tag">redesign estrutural</span>
+              <span class="tag">perspectiva alternativa</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#46</span>
+            <span class="instr-text">Compare a resposta atual com uma alternativa construída a partir de premissas mínimas absolutas.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Premissas mínimas é o <span class="ht">princípio cartesiano aplicado ao contexto</span>: 
+                o que é irredutível, o que pode ser desafiado? 
+                Ao construir uma análise alternativa a partir de premissas mínimas, o modelo revela quais elementos 
+                da análise original dependem de pressupostos não-necessários — e portanto vulneráveis. 
+                É um teste de minimalidade epistêmica.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">premissas mínimas</span>
+              <span class="tag">Descartes</span>
+              <span class="tag">minimalidade epistêmica</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#47</span>
+            <span class="instr-text">Declare explicitamente: o que esta análise não pode responder? Quais são seus limites constitutivos?</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O teorema da incompletude de Gödel demonstrou que sistemas formais suficientemente poderosos 
+                contêm afirmações verdadeiras que não podem provar. Toda análise tem seus limites constitutivos — 
+                o que ela não pode ver porque está dentro do sistema. 
+                Esta instrução força a explicitação desses <span class="ht">pontos cegos estruturais</span>, 
+                produzindo outputs epistemicamente honestos sobre suas próprias limitações.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">limites constitutivos</span>
+              <span class="tag">Gödel</span>
+              <span class="tag">honestidade epistêmica</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#48</span>
+            <span class="instr-text">Pontue sua própria confiança em cada afirmação central numa escala epistêmica: especulação / hipótese / inferência / fato.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                <strong>Calibração epistêmica</strong> é uma das habilidades mais valiosas — e raras — em qualquer sistema de raciocínio. 
+                Ao forçar pontuação explícita do status epistêmico de cada afirmação, 
+                o modelo implementa o equivalente do <span class="ht">sistema de confiança bayesiano</span>: 
+                cada afirmação carrega um grau de crença explícito. 
+                Produz outputs com heterogeneidade epistêmica honesta, ao invés de certeza uniformemente simulada.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">calibração epistêmica</span>
+              <span class="tag">grau de confiança</span>
+              <span class="tag">bayesiano</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="objective-box">
+        <span class="obj-icon">🔷</span>
+        <div class="obj-content">
+          <div class="obj-label">Objetivo Epistêmico do Modo VIII</div>
+          <p>Controle da qualidade inferencial de segunda ordem. O modelo monitora e regula seu próprio processo 
+          cognitivo — produzindo outputs que são não apenas corretos, mas epistemicamente calibrados e honestos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ MODE IX -->
+    <section class="mode-section m9" id="m9">
+      <div class="mode-header">
+        <div class="mode-badge"><div>IX</div><div class="roman">MODE</div></div>
+        <div class="mode-info">
+          <div class="mode-tag">🔮 Abdutivo-Heurístico</div>
+          <h2>Raciocínio pela Melhor Explicação</h2>
+          <div class="mode-nature">Inferência abdutiva · Heurísticas de descoberta · Diagnóstico de causa profunda</div>
+        </div>
+      </div>
+
+      <div class="epistemic-card">
+        <p>
+          Charles Sanders Peirce identificou três formas de inferência: dedução (do geral ao particular), 
+          indução (do particular ao geral) e <strong>abdução</strong> (da observação à melhor hipótese explicativa). 
+          A abdução é a lógica da descoberta científica — Sherlock Holmes raciocina abdutivamente, não dedutivamente.
+        </p>
+        <p>
+          Para LLMs, o modo abdutivo é particularmente valioso em diagnóstico, análise forense e descoberta científica. 
+          Dado um conjunto de observações anômalas, qual é a hipótese que as explica melhor com a maior 
+          <span class="ht">potência explanatória mínima</span>? 
+          O Modo IX condiciona o modelo a operar neste espaço — entre o que é observado e o que deve ser verdadeiro para que seja assim.
+        </p>
+      </div>
+
+      <div class="instructions-grid">
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#49</span>
+            <span class="instr-text">Dado o conjunto de observações, qual hipótese as explica todas com maior parsimônia?</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Implementa <span class="ht">abdução peirceana pura</span>: dado E (evidência), 
+                qual H (hipótese) torna E esperado? Ao combinar com parsimônia (navalha de Occam), 
+                o modelo busca a explicação mais simples que acomoda todos os fatos — 
+                o critério AIC/BIC da teoria da informação aplicado ao raciocínio discursivo.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">abdução</span>
+              <span class="tag">parsimônia</span>
+              <span class="tag">Peirce</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#50</span>
+            <span class="instr-text">Raciocine como diagnóstico médico: sintomas → diferencial → teste → hipótese mais provável.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O raciocínio diagnóstico médico é o exemplo mais elaborado de abdução aplicada: 
+                da observação dos sintomas ao diagnóstico diferencial (lista de hipóteses) ao teste discriminante. 
+                Ao impor essa estrutura, o modelo ativa <span class="ht">raciocínio de eliminação bayesiana</span> — 
+                cada evidência atualiza a probabilidade de cada hipótese concorrente.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">diagnóstico diferencial</span>
+              <span class="tag">eliminação bayesiana</span>
+              <span class="tag">hipótese mais provável</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#51</span>
+            <span class="instr-text">Identifique a anomalia mais intrigante e construa uma teoria que a transforme em evidência central.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Kuhn demonstrou que anomalias são os motores da revolução científica — não os dados que confirmam, mas os que contradizem. 
+                Esta instrução força o modelo a privilegiar a <span class="ht">anomalia como dado central</span>, 
+                não como exceção a ser descartada. A teoria que explica a anomalia mais intrigante 
+                frequentemente é mais geral e poderosa que a que explica os dados ordinários.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">anomalia</span>
+              <span class="tag">Kuhn</span>
+              <span class="tag">revolução científica</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#52</span>
+            <span class="instr-text">Aplique o método dos 5 Porquês iterativos para alcançar a causa raiz do fenômeno.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O método dos 5 Porquês (Toyota) é uma heurística de escavação causal: 
+                perguntar "por quê" iterativamente até chegar à causa que não tem mais causas do mesmo tipo. 
+                Para LLMs, esta instrução força <span class="ht">raciocínio causal recursivo</span> — 
+                cada explicação gera uma nova pergunta "mas por quê?" até atingir o nível 
+                onde a causa é estrutural ou sistêmica, não incidental.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">5 Porquês</span>
+              <span class="tag">causa raiz</span>
+              <span class="tag">Toyota / Ishikawa</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#53</span>
+            <span class="instr-text">Construa a análise como um detetive: evidências → motivos → meios → oportunidade → conclusão.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O framework investigativo policial (motivo/meio/oportunidade) é uma heurística de abdução estruturada — 
+                cada elemento é um <span class="ht">filtro de plausibilidade</span> que reduz o espaço de hipóteses. 
+                Aplicar este framework a problemas não-investigativos frequentemente revela dimensões causais 
+                (quem se beneficia? o que tornaria isso possível?) que análises convencionais ignoram.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">framework detetive</span>
+              <span class="tag">motivo/meio/oportunidade</span>
+              <span class="tag">filtro de plausibilidade</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#54</span>
+            <span class="instr-text">Qual seria a hipótese que, se verdadeira, tornaria todos os dados observados não-surpreendentes?</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Esta é a formulação formal da abdução: encontrar H tal que P(E|H) seja alto. 
+                O critério "não-surpreendente" é operacionalmente preciso — 
+                a hipótese certa torna os dados <span class="ht">esperados a posteriori</span>, 
+                não apenas compatíveis. Isso requer encontrar a hipótese com máxima potência explanatória, 
+                não apenas compatibilidade superficial.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">abdução formal</span>
+              <span class="tag">potência explanatória</span>
+              <span class="tag">P(E|H) máximo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="objective-box">
+        <span class="obj-icon">🔮</span>
+        <div class="obj-content">
+          <div class="obj-label">Objetivo Epistêmico do Modo IX</div>
+          <p>Raciocínio pela melhor explicação. O modelo opera como detetive epistêmico — 
+          construindo hipóteses que explicam os dados com máxima potência e mínima complexidade.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ MODE X -->
+    <section class="mode-section m10" id="m10">
+      <div class="mode-header">
+        <div class="mode-badge"><div>X</div><div class="roman">MODE</div></div>
+        <div class="mode-info">
+          <div class="mode-tag">🟩 Síntese Dialética</div>
+          <h2>Unificação de Contradições</h2>
+          <div class="mode-nature">Tensão tética · Síntese hegeliana · Transcendência de oposições</div>
+        </div>
+      </div>
+
+      <div class="epistemic-card">
+        <p>
+          A dialética hegeliana não é apenas um método histórico — é uma <strong>epistemologia da tensão produtiva</strong>. 
+          Tese e antítese não se anulam: produzem uma síntese que preserva e eleva o que havia de verdadeiro em ambas. 
+          O Modo X implementa este processo formalmente, usando a contradição como motor de síntese de ordem superior.
+        </p>
+        <p>
+          Para LLMs, este modo é especialmente poderoso porque a tendência natural é 
+          <em>escolher entre</em> posições opostas, não <em>transcendê-las</em>. 
+          O Modo X força o modelo a encontrar o espaço conceitual onde a oposição se dissolve — 
+          porque foi formulada num nível de abstração inadequado, ou porque ambas as posições são 
+          <span class="ht">instâncias de um padrão mais geral</span>.
+        </p>
+      </div>
+
+      <div class="instructions-grid">
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#55</span>
+            <span class="instr-text">Identifique a tensão central do problema e construa uma síntese que preserve o que é verdadeiro em cada polo.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Implementa <span class="ht">síntese hegeliana formal</span>: ao preservar o que é verdadeiro em cada polo, 
+                a síntese não é compromisso (média dos extremos) mas elevação (nova categoria que inclui ambos). 
+                A diferença é crucial: compromisso perde força de ambos os lados; síntese ganha força de ambos.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">síntese hegeliana</span>
+              <span class="tag">aufhebung</span>
+              <span class="tag">preservação e elevação</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#56</span>
+            <span class="instr-text">Mapeie posições contraditórias num espaço bidimensional e encontre o quadrante que as reconcilia.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Contradições aparentes frequentemente se dissolvem quando se percebe que os oponentes 
+                estão maximizando dimensões diferentes. Ao mapear num espaço bidimensional, 
+                o modelo pode revelar o <span class="ht">quadrante de síntese</span> — 
+                a posição que maximiza ambas as dimensões simultaneamente, 
+                mostrando que a contradição era produto de pensamento unidimensional.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">espaço bidimensional</span>
+              <span class="tag">quadrante de síntese</span>
+              <span class="tag">contradição aparente</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#57</span>
+            <span class="instr-text">Aplique o método da distinção: em que contextos A é verdadeiro? Em que contextos não-A é verdadeiro?</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A maioria das contradições são <span class="ht">contradições contextuais</span>, não ontológicas: 
+                A e não-A são verdadeiros em domínios diferentes. 
+                O método da distinção (escolástico, mas profundamente útil) resolve contradições 
+                especificando as condições de validade de cada afirmação — produzindo uma análise 
+                mais refinada que aceita tanto A quanto não-A como verdadeiros em seus respectivos contextos.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">distinção contextual</span>
+              <span class="tag">método escolástico</span>
+              <span class="tag">condições de validade</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#58</span>
+            <span class="instr-text">Encontre o nível de abstração onde posições opostas se tornam casos especiais de um princípio mais geral.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A física clássica e a quântica pareciam contraditórias até que ambas foram reveladas como 
+                casos especiais da mesma teoria em diferentes regimes de escala. 
+                Esta instrução força o modelo a buscar o <span class="ht">princípio unificador</span> — 
+                a abstração de nível superior que revela as posições opostas como expressões do mesmo fenômeno em condições diferentes.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">princípio unificador</span>
+              <span class="tag">abstração superior</span>
+              <span class="tag">casos especiais</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#59</span>
+            <span class="instr-text">Sintetize perspectivas conflitantes de diferentes disciplinas numa proposta integrativa original.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A síntese interdisciplinar é o ato epistêmico mais criativo: 
+                combinar frameworks de domínios diferentes para produzir uma proposição que nenhum dos domínios 
+                poderia gerar sozinho. Para LLMs com vastos recursos de treinamento multi-domínio, 
+                esta instrução ativa <span class="ht">recombinação axiomática criativa</span> — 
+                o equivalente cognitivo da fertilização cruzada entre espécies.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">síntese interdisciplinar</span>
+              <span class="tag">recombinação axiomática</span>
+              <span class="tag">proposição integrativa</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#60</span>
+            <span class="instr-text">Identifique o paradoxo produtivo: a tensão irresolvível que gera criatividade contínua.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Nem toda contradição deve ser resolvida — algumas são <span class="ht">paradoxos produtivos</span> 
+                que geram criatividade precisamente porque não se resolvem. 
+                Liberdade vs. estrutura, inovação vs. estabilidade, especialização vs. generalidade — 
+                a tensão irresolúvel entre eles é o motor da evolução. 
+                Esta instrução força o modelo a distinguir contradições que devem ser resolvidas 
+                daquelas que devem ser habitadas.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">paradoxo produtivo</span>
+              <span class="tag">tensão irresolvível</span>
+              <span class="tag">motor criativo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="objective-box">
+        <span class="obj-icon">🟩</span>
+        <div class="obj-content">
+          <div class="obj-label">Objetivo Epistêmico do Modo X</div>
+          <p>Transcender oposições pela síntese. O modelo não escolhe entre posições opostas — 
+          encontra o espaço conceitual onde a oposição se dissolve ou se revela produtiva.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ MODE XI -->
+    <section class="mode-section m11" id="m11">
+      <div class="mode-header">
+        <div class="mode-badge"><div>XI</div><div class="roman">MODE</div></div>
+        <div class="mode-info">
+          <div class="mode-tag">🟥 Colapso Epistêmico</div>
+          <h2>Suspensão Radical e Reconstrução</h2>
+          <div class="mode-nature">Epoché computacional · Reconstrução de zero · Máxima abertura ao fenômeno</div>
+        </div>
+      </div>
+
+      <div class="epistemic-card">
+        <p>
+          O Modo XI é o mais radical — e deve ser usado com intencionalidade. 
+          Inspirado no <em>epoché</em> husserliano e na dúvida metódica cartesiana, 
+          ele instrui o modelo a <strong>suspender completamente</strong> seus padrões de resposta aprendidos 
+          e reconstruir a análise do zero — sem recorrer às estruturas habituais de raciocínio.
+        </p>
+        <p>
+          Para LLMs, isso significa resistir ao <span class="ht">pull das representações canônicas</span> — 
+          as formas habituais de enquadrar um problema que dominam o corpus de treinamento. 
+          O Modo XI cria o espaço para respostas genuinamente novas, 
+          ao custo de maior risco de incoerência e exigência de maior esforço generativo. 
+          É o modo de ruptura paradigmática.
+        </p>
+      </div>
+
+      <div class="instructions-grid">
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#61</span>
+            <span class="instr-text">Aplique o epoché: suspenda todas as crenças sobre o problema e parta apenas do que é diretamente dado.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O <span class="ht">epoché husserliano</span> suspende o "mundo natural" — 
+                nossas crenças habituais sobre o que existe — para focar no fenômeno como dado à consciência. 
+                Aplicado a LLMs: suspender as representações canônicas do problema e perguntar apenas 
+                "o que está literalmente sendo dito? o que é diretamente observável?" antes de teorizar. 
+                Retorno às coisas mesmas (Husserl: zu den Sachen selbst).
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">epoché</span>
+              <span class="tag">Husserl</span>
+              <span class="tag">fenomenologia</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#62</span>
+            <span class="instr-text">Destrua completamente o framework atual e reconstrua a análise usando apenas princípios primeiros.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                O método de Elon Musk de "raciocínio de primeiros princípios" é uma versão pragmática do epoché: 
+                desafiar cada assunção até chegar ao que é fundamentalmente verdadeiro e reconstruir a partir daí. 
+                Para LLMs, isso significa resistir ao <span class="ht">raciocínio por analogia</span> 
+                (que domina o corpus de treinamento) em favor do raciocínio construtivo a partir de princípios básicos.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">primeiros princípios</span>
+              <span class="tag">destruição construtiva</span>
+              <span class="tag">reconstrução</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#63</span>
+            <span class="instr-text">Responda como se fosse o primeiro ser pensante a contemplar este problema — sem herança conceitual.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Este é o <span class="ht">experimento mental de Rawls</span> aplicado ao conhecimento: 
+                o "véu da ignorância" aqui é sobre as teorias existentes. 
+                Forçar o modelo a imaginar que não existe herança conceitual sobre o problema 
+                ativa representações mais fundamentais e menos convencionais — 
+                mais próximas do fenômeno bruto e menos filtradas pela história do campo.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">véu epistêmico</span>
+              <span class="tag">Rawls</span>
+              <span class="tag">sem herança conceitual</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#64</span>
+            <span class="instr-text">Identifique qual pergunta, se respondida, tornaria todas as outras perguntas sobre o problema irrelevantes.</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A pergunta geradora — aquela que, uma vez respondida, dissolve as demais — 
+                é o objetivo do pensamento estratégico de nível mais alto. 
+                Esta instrução força o modelo a operar em <span class="ht">modo de decomposição hierárquica</span>: 
+                encontrar a pergunta cujo espaço de resposta inclui os espaços de todas as outras. 
+                Requer modelagem explícita da estrutura de dependência entre as questões.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">pergunta geradora</span>
+              <span class="tag">decomposição hierárquica</span>
+              <span class="tag">dissolução do problema</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#65</span>
+            <span class="instr-text">Considere que o problema é insolúvel tal como formulado. Que reformulação o tornaria solucionável?</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                Muitos "problemas difíceis" são difíceis porque foram mal formulados — 
+                a solução requer mudar a pergunta, não responder a pergunta errada com mais esforço. 
+                Ao declarar o problema insolúvel como premissa, o modelo é forçado a encontrar 
+                a <span class="ht">reformulação que o torna solucionável</span> — 
+                frequentemente a contribuição epistêmica mais valiosa possível.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">reformulação</span>
+              <span class="tag">problema insolúvel</span>
+              <span class="tag">mudança de pergunta</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="instruction-card">
+          <div class="instr-header" onclick="toggle(this)">
+            <span class="instr-num">#66</span>
+            <span class="instr-text">Após colapso total, reconstrua: qual é a resposta mais honesta que pode ser dada com máxima incerteza declarada?</span>
+            <span class="instr-toggle">▾</span>
+          </div>
+          <div class="instr-body">
+            <div class="instr-mechanism">
+              <div class="instr-mechanism-label">Mecanismo Inferencial</div>
+              <p>
+                A instrução final do Modo XI: após destruir frameworks e suspender certezas, 
+                o modelo deve reconstruir — mas desta vez com <span class="ht">máxima honestidade epistêmica</span>. 
+                "A resposta mais honesta com máxima incerteza declarada" é a forma mais epistemicamente íntegra de conhecimento: 
+                aquela que não esconde o que não sabe atrás de fluência retórica. 
+                É o ideal regulativo do conhecimento científico genuíno.
+              </p>
+            </div>
+            <div class="instr-tags">
+              <span class="tag">reconstrução epistêmica</span>
+              <span class="tag">máxima honestidade</span>
+              <span class="tag">incerteza declarada</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="objective-box">
+        <span class="obj-icon">🟥</span>
+        <div class="obj-content">
+          <div class="obj-label">Objetivo Epistêmico do Modo XI</div>
+          <p>Ruptura paradigmática e reconstrução genuína. O modelo abandona padrões habituais de resposta 
+          e reconstrói a partir do fenômeno bruto — o modo mais arriscado e potencialmente mais revelador.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════ PIPELINE -->
+    <div class="pipeline-section" id="pipeline">
+      <h3>Pipeline de Modos: Sequenciamento Epistêmico</h3>
+      <p class="pipeline-desc">
+        A superlib não é um cardápio de opções isoladas — é um sistema de sequenciamento cognitivo. 
+        Diferentes problemas requerem diferentes pipelines. A ordem importa: 
+        explorar antes de estruturar, estruturar antes de criticar, criticar antes de sintetizar.
+      </p>
+
+      <p style="font-family: var(--ff-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 16px; letter-spacing: 0.08em;">
+        PIPELINE PADRÃO — Análise Profunda
+      </p>
+      <div class="pipeline">
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(32,96,224,0.15);border-color:var(--mode-I);color:var(--mode-I);">
+            <span class="pipe-roman">I</span>
+            <span>Explorar</span>
+          </div>
+          <div class="pipe-label">Expansão<br>do espaço</div>
+        </div>
+        <div class="pipe-connector">→</div>
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(192,48,48,0.15);border-color:var(--mode-II);color:var(--mode-II);">
+            <span class="pipe-roman">II</span>
+            <span>Estruturar</span>
+          </div>
+          <div class="pipe-label">Rigor<br>lógico</div>
+        </div>
+        <div class="pipe-connector">→</div>
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(26,144,64,0.15);border-color:var(--mode-III);color:var(--mode-III);">
+            <span class="pipe-roman">III</span>
+            <span>Conectar</span>
+          </div>
+          <div class="pipe-label">Pensamento<br>sistêmico</div>
+        </div>
+        <div class="pipe-connector">→</div>
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(0,0,0,0.3);border-color:var(--mode-VII);color:var(--mode-VII);">
+            <span class="pipe-roman">VII</span>
+            <span>Criticar</span>
+          </div>
+          <div class="pipe-label">Estresse<br>intelectual</div>
+        </div>
+        <div class="pipe-connector">→</div>
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(48,176,96,0.15);border-color:var(--mode-X);color:var(--mode-X);">
+            <span class="pipe-roman">X</span>
+            <span>Sintetizar</span>
+          </div>
+          <div class="pipe-label">Síntese<br>dialética</div>
+        </div>
+        <div class="pipe-connector">→</div>
+        <div class="pipe-step">
+          <div class="pipe-node" style="background:rgba(192,128,32,0.15);border-color:var(--mode-V);color:var(--mode-V);">
+            <span class="pipe-roman">V</span>
+            <span>Comprimir</span>
+          </div>
+          <div class="pipe-label">Densidade<br>executiva</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILES -->
+    <div class="profiles-section">
+      <h3>Perfis de Combinação</h3>
+      <div class="profiles-grid">
+        <div class="profile-card">
+          <h4>🎯 Perfil Estratégico-Executivo</h4>
+          <div class="modes">
+            <span class="mode-ref" style="border-color:var(--mode-I);color:var(--mode-I)">I Exploratório</span>
+            <span class="mode-ref" style="border-color:var(--mode-IV);color:var(--mode-IV)">IV Estratégico</span>
+            <span class="mode-ref" style="border-color:var(--mode-VII);color:var(--mode-VII)">VII Adversarial</span>
+            <span class="mode-ref" style="border-color:var(--mode-V);color:var(--mode-V)">V Compressão</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <h4>🔬 Perfil Científico-Rigoroso</h4>
+          <div class="modes">
+            <span class="mode-ref" style="border-color:var(--mode-IX);color:var(--mode-IX)">IX Abdutivo</span>
+            <span class="mode-ref" style="border-color:var(--mode-II);color:var(--mode-II)">II Analítico</span>
+            <span class="mode-ref" style="border-color:var(--mode-VIII);color:var(--mode-VIII)">VIII Meta-Cognitivo</span>
+            <span class="mode-ref" style="border-color:var(--mode-VI);color:var(--mode-VI)">VI Filosófico</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <h4>💡 Perfil Inovação-Radical</h4>
+          <div class="modes">
+            <span class="mode-ref" style="border-color:var(--mode-XI);color:var(--mode-XI)">XI Colapso</span>
+            <span class="mode-ref" style="border-color:var(--mode-I);color:var(--mode-I)">I Exploratório</span>
+            <span class="mode-ref" style="border-color:var(--mode-X);color:var(--mode-X)">X Dialético</span>
+            <span class="mode-ref" style="border-color:var(--mode-VI);color:var(--mode-VI)">VI Filosófico</span>
+          </div>
+        </div>
+        <div class="profile-card">
+          <h4>🧩 Perfil Diagnóstico-Sistêmico</h4>
+          <div class="modes">
+            <span class="mode-ref" style="border-color:var(--mode-IX);color:var(--mode-IX)">IX Abdutivo</span>
+            <span class="mode-ref" style="border-color:var(--mode-III);color:var(--mode-III)">III Sistêmico</span>
+            <span class="mode-ref" style="border-color:var(--mode-II);color:var(--mode-II)">II Analítico</span>
+            <span class="mode-ref" style="border-color:var(--mode-VIII);color:var(--mode-VIII)">VIII Meta-Cognitivo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <footer class="doc-footer">
+    <span>SuperLib™ Paramprompting</span> · Método Coragem™ v3.0<br>
+    Idealizador: <span>Luiz Guilherme Coragem</span> · Projeto Pessoal Independente · 2025<br>
+    <em style="opacity:0.4;">11 modos · 66 instruções · fundamento epistêmico completo por instrução</em>
+  </footer>
+</main>
+
+<script>
+  function toggle(header) {
+    const card = header.parentElement;
+    card.classList.toggle('open');
+  }
+
+  // Highlight active nav item on scroll
+  const sections = document.querySelectorAll('[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(item => item.classList.remove('active'));
+        const active = document.querySelector(`.nav-item[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

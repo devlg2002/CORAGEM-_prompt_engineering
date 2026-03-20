@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Config Agêntica™ — Camada 9 · Método Coragem™</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #070608;
+      --bg2:      #0c0a0f;
+      --bg3:      #111018;
+      --surface:  #17141f;
+      --surface2: #1f1b2a;
+      --border:   #2a2535;
+      --border2:  #352f45;
+
+      --amber:    #e8a832;
+      --amber2:   #f0c060;
+      --amber-dim: rgba(232,168,50,0.1);
+      --amber-glow: rgba(232,168,50,0.06);
+      --copper:   #b87340;
+      --copper2:  #d4905a;
+
+      --truth-stat:  #3a8ee8;  /* azul — Probabilística */
+      --truth-logic: #38c878;  /* verde — Lógica        */
+      --truth-prag:  #e85050;  /* vermelho — Pragmática  */
+
+      --text:     #d8cce8;
+      --text-dim: #7a6a8a;
+      --text-muted: #3d3450;
+      --white:    #f0eaf8;
+
+      --ff-display: 'Bebas Neue', sans-serif;
+      --ff-body:    'Crimson Pro', Georgia, serif;
+      --ff-mono:    'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ff-body);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* PCB texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.015) 39px, rgba(255,255,255,0.015) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.015) 39px, rgba(255,255,255,0.015) 40px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .z1 { position: relative; z-index: 1; }
+
+    /* ── HERO ─────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 80px 40px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 60%, rgba(232,168,50,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse at 20% 20%, rgba(58,142,232,0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(232,80,80,0.04) 0%, transparent 50%);
+    }
+
+    /* Animated circuit lines */
+    .circuit-lines {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .circuit-lines svg {
+      width: 100%;
+      height: 100%;
+      opacity: 0.12;
+    }
+
+    .cl-path {
+      fill: none;
+      stroke: var(--amber);
+      stroke-width: 1;
+      stroke-dasharray: 8 4;
+      animation: dash 8s linear infinite;
+    }
+
+    .cl-path:nth-child(2) { stroke: var(--truth-stat); animation-duration: 12s; animation-direction: reverse; }
+    .cl-path:nth-child(3) { stroke: var(--truth-logic); animation-duration: 10s; }
+    .cl-path:nth-child(4) { stroke: var(--truth-prag); animation-duration: 15s; animation-direction: reverse; }
+
+    @keyframes dash {
+      to { stroke-dashoffset: -120; }
+    }
+
+    .hero-layer {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--amber);
+      margin-bottom: 20px;
+      opacity: 0.8;
+      animation: fadeUp 1s ease both;
+    }
+
+    .hero h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(4rem, 12vw, 9rem);
+      color: var(--white);
+      letter-spacing: 0.04em;
+      line-height: 0.9;
+      margin-bottom: 10px;
+      animation: fadeUp 1s ease 0.1s both;
+    }
+
+    .hero h1 span { color: var(--amber); }
+
+    .hero-sub {
+      font-family: var(--ff-display);
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      margin-bottom: 40px;
+      animation: fadeUp 1s ease 0.2s both;
+    }
+
+    .hero-desc {
+      max-width: 640px;
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      font-style: italic;
+      line-height: 1.7;
+      margin-bottom: 48px;
+      animation: fadeUp 1s ease 0.3s both;
+    }
+
+    /* Three Truths badges */
+    .three-truths {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+      animation: fadeUp 1s ease 0.4s both;
+    }
+
+    .truth-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 3px;
+      font-family: var(--ff-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid;
+    }
+
+    .truth-badge .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .tb-stat  { border-color: var(--truth-stat);  color: var(--truth-stat);  background: rgba(58,142,232,0.08); }
+    .tb-logic { border-color: var(--truth-logic); color: var(--truth-logic); background: rgba(56,200,120,0.08); }
+    .tb-prag  { border-color: var(--truth-prag);  color: var(--truth-prag);  background: rgba(232,80,80,0.08); }
+
+    .hero-scroll {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      animation: fadeUp 1s ease 0.5s both, pulse 3s ease infinite;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1; }
+    }
+
+    /* ── CONTAINER ─────────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+
+    /* ── SECTION ───────────────────────────────────────────── */
+    .section {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section:last-of-type { border-bottom: none; }
+
+    .section-header {
+      margin-bottom: 48px;
+    }
+
+    .section-eyebrow {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .section-header h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      color: var(--white);
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .section-header p {
+      font-size: 1rem;
+      color: var(--text-dim);
+      font-style: italic;
+      max-width: 700px;
+    }
+
+    /* ── PROSE ─────────────────────────────────────────────── */
+    .prose p {
+      text-align: justify;
+      color: var(--text-dim);
+      margin-bottom: 1em;
+      font-size: 0.97rem;
+    }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose strong { color: var(--text); }
+    .prose em { color: inherit; }
+
+    .ht {
+      font-family: var(--ff-mono);
+      font-size: 0.82em;
+      padding: 1px 7px;
+      border-radius: 3px;
+      background: rgba(232,168,50,0.1);
+      border: 1px solid rgba(232,168,50,0.25);
+      color: var(--amber2);
+      font-style: normal;
+    }
+
+    .ht-stat  { background: rgba(58,142,232,0.1);  border-color: rgba(58,142,232,0.25);  color: #80b8f8; }
+    .ht-logic { background: rgba(56,200,120,0.1);  border-color: rgba(56,200,120,0.25);  color: #70e0a0; }
+    .ht-prag  { background: rgba(232,80,80,0.1);   border-color: rgba(232,80,80,0.25);   color: #f09090; }
+
+    /* ── DEFINITION BOX ────────────────────────────────────── */
+    .def-box {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--amber);
+      border-radius: 0 4px 4px 0;
+      padding: 24px 28px;
+      margin: 32px 0;
+      position: relative;
+    }
+
+    .def-box::before {
+      content: 'DEFINIÇÃO FORMAL';
+      position: absolute;
+      top: -9px; left: 20px;
+      background: var(--surface);
+      padding: 0 10px;
+      font-family: var(--ff-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--amber);
+    }
+
+    .def-box p {
+      font-size: 1rem;
+      color: var(--text-dim);
+      text-align: justify;
+      font-style: italic;
+      margin-bottom: 0.8em;
+    }
+
+    .def-box p:last-child { margin-bottom: 0; }
+    .def-box strong { color: var(--white); font-style: normal; }
+
+    /* ── THREE TRUTHS SECTION ──────────────────────────────── */
+    .truths-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 32px 0;
+    }
+
+    .truth-cell {
+      background: var(--bg2);
+      padding: 28px 24px;
+    }
+
+    .truth-cell-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .truth-orb {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .truth-cell h4 {
+      font-family: var(--ff-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .truth-cell p {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      text-align: justify;
+      margin-bottom: 12px;
+    }
+
+    .truth-cell .agent-ex {
+      font-family: var(--ff-mono);
+      font-size: 0.72rem;
+      padding: 10px 12px;
+      border-radius: 3px;
+      line-height: 1.5;
+    }
+
+    .tc-stat h4, .tc-stat .truth-orb { color: var(--truth-stat); }
+    .tc-stat .truth-orb { background: rgba(58,142,232,0.12); border: 1px solid rgba(58,142,232,0.3); }
+    .tc-stat .agent-ex { background: rgba(58,142,232,0.06); border: 1px solid rgba(58,142,232,0.15); color: #80b8f8; }
+
+    .tc-logic h4, .tc-logic .truth-orb { color: var(--truth-logic); }
+    .tc-logic .truth-orb { background: rgba(56,200,120,0.12); border: 1px solid rgba(56,200,120,0.3); }
+    .tc-logic .agent-ex { background: rgba(56,200,120,0.06); border: 1px solid rgba(56,200,120,0.15); color: #70e0a0; }
+
+    .tc-prag h4, .tc-prag .truth-orb { color: var(--truth-prag); }
+    .tc-prag .truth-orb { background: rgba(232,80,80,0.12); border: 1px solid rgba(232,80,80,0.3); }
+    .tc-prag .agent-ex { background: rgba(232,80,80,0.06); border: 1px solid rgba(232,80,80,0.15); color: #f09090; }
+
+    /* ── FEEDBACK LOOP DIAGRAM ─────────────────────────────── */
+    .feedback-diagram {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      padding: 48px 40px;
+      margin: 40px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feedback-diagram::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(232,168,50,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .fd-title {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--amber);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    /* Agent flow */
+    .agent-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 32px;
+    }
+
+    .agent-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 100px;
+    }
+
+    .agent-hex {
+      width: 72px; height: 72px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid;
+      position: relative;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+
+    .agent-hex:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px -4px rgba(0,0,0,0.4);
+    }
+
+    .agent-hex .agent-icon { font-size: 1.4rem; line-height: 1; margin-bottom: 3px; }
+    .agent-hex .agent-num {
+      font-family: var(--ff-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      opacity: 0.7;
+    }
+
+    .agent-label {
+      font-family: var(--ff-mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 8px;
+      line-height: 1.3;
+      max-width: 90px;
+    }
+
+    /* arrow connector */
+    .flow-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 4px;
+      padding-bottom: 28px;
+      gap: 2px;
+      min-width: 36px;
+    }
+
+    .fa-line {
+      width: 28px; height: 1px;
+      position: relative;
+    }
+
+    .fa-line::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      animation: flow-dash 1.5s linear infinite;
+      background: repeating-linear-gradient(90deg, var(--amber) 0, var(--amber) 4px, transparent 4px, transparent 8px);
+      background-size: 200%;
+    }
+
+    @keyframes flow-dash {
+      from { background-position: 0%; }
+      to   { background-position: 100%; }
+    }
+
+    .fa-tip {
+      font-size: 0.7rem;
+      color: var(--amber);
+      margin-left: 14px;
+    }
+
+    /* Feedback arc */
+    .feedback-arc {
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .feedback-arc svg {
+      overflow: visible;
+    }
+
+    .fa-path {
+      fill: none;
+      stroke: var(--copper);
+      stroke-width: 1.5;
+      stroke-dasharray: 6 4;
+      animation: dash-reverse 2s linear infinite;
+    }
+
+    @keyframes dash-reverse {
+      from { stroke-dashoffset: 0; }
+      to   { stroke-dashoffset: -40; }
+    }
+
+    .pivot-indicator {
+      background: var(--surface2);
+      border: 1px solid rgba(232,168,50,0.2);
+      border-radius: 4px;
+      padding: 14px 20px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pivot-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .pivot-text {
+      font-family: var(--ff-mono);
+      font-size: 0.72rem;
+      color: var(--amber2);
+      line-height: 1.5;
+    }
+
+    /* ── AGENT CARD ────────────────────────────────────────── */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .agent-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .agent-card:hover { border-color: var(--amber); }
+
+    .ac-header {
+      padding: 18px 20px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ac-num {
+      width: 32px; height: 32px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      flex-shrink: 0;
+      background: var(--amber-dim);
+      border: 1px solid rgba(232,168,50,0.3);
+      color: var(--amber2);
+    }
+
+    .ac-title {
+      flex: 1;
+    }
+
+    .ac-title h4 {
+      font-family: var(--ff-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 2px;
+    }
+
+    .ac-title .ac-role {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: var(--ff-mono);
+    }
+
+    .ac-truth-badges {
+      display: flex;
+      gap: 4px;
+    }
+
+    .ac-truth-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+
+    .ac-body {
+      padding: 16px 20px;
+    }
+
+    .ac-body p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      text-align: justify;
+      margin-bottom: 12px;
+    }
+
+    .ac-output {
+      font-family: var(--ff-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      background: var(--bg2);
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+
+    .ac-output::before { content: 'OUTPUT → '; color: var(--amber); }
+
+    .ac-feeds {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    .ac-feeds::before { content: 'ALIMENTA → '; color: var(--copper); }
+
+    .feed-target {
+      padding: 2px 7px;
+      border-radius: 3px;
+      border: 1px solid var(--copper);
+      color: var(--copper2);
+      background: rgba(184,115,64,0.08);
+    }
+
+    /* ── CASE STUDIES ──────────────────────────────────────── */
+    .case-section {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 40px 0;
+    }
+
+    .case-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .case-tab {
+      padding: 14px 20px;
+      font-family: var(--ff-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+
+    .case-tab:hover { color: var(--text-dim); background: var(--surface); }
+    .case-tab.active { color: var(--amber); border-bottom-color: var(--amber); background: var(--amber-glow); }
+
+    .case-pane { display: none; padding: 32px; }
+    .case-pane.active { display: block; }
+
+    .case-pane h3 {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      color: var(--white);
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .case-context {
+      font-family: var(--ff-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+
+    .case-desc {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+      font-style: italic;
+      margin-bottom: 28px;
+      text-align: justify;
+      max-width: 760px;
+    }
+
+    /* Agent list in cases */
+    .case-agents {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .ca-row {
+      display: grid;
+      grid-template-columns: 40px 180px 1fr auto;
+      gap: 16px;
+      align-items: start;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      padding: 14px 16px;
+      position: relative;
+    }
+
+    .ca-row::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 2px; height: 100%;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .ca-stat::before  { background: var(--truth-stat); }
+    .ca-logic::before { background: var(--truth-logic); }
+    .ca-prag::before  { background: var(--truth-prag); }
+    .ca-pivot::before { background: var(--amber); }
+
+    .ca-num {
+      font-family: var(--ff-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding-top: 2px;
+    }
+
+    .ca-name {
+      font-family: var(--ff-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--white);
+      padding-top: 2px;
+      line-height: 1.4;
+    }
+
+    .ca-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      text-align: justify;
+    }
+
+    .ca-truth-tag {
+      font-family: var(--ff-mono);
+      font-size: 0.58rem;
+      padding: 3px 8px;
+      border-radius: 3px;
+      border: 1px solid;
+      white-space: nowrap;
+      align-self: start;
+    }
+
+    .tag-stat  { border-color: var(--truth-stat);  color: var(--truth-stat);  background: rgba(58,142,232,0.08); }
+    .tag-logic { border-color: var(--truth-logic); color: var(--truth-logic); background: rgba(56,200,120,0.08); }
+    .tag-prag  { border-color: var(--truth-prag);  color: var(--truth-prag);  background: rgba(232,80,80,0.08); }
+    .tag-pivot { border-color: var(--amber);        color: var(--amber);       background: var(--amber-dim); }
+
+    .pivot-box {
+      background: rgba(232,168,50,0.06);
+      border: 1px solid rgba(232,168,50,0.2);
+      border-radius: 4px;
+      padding: 16px 20px;
+      margin-top: 8px;
+    }
+
+    .pivot-box .pb-label {
+      font-family: var(--ff-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--amber);
+      margin-bottom: 8px;
+    }
+
+    .pivot-box p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      text-align: justify;
+    }
+
+    /* ── ORCHESTRATOR SECTION ──────────────────────────────── */
+    .orchestrator-block {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      padding: 28px 32px;
+      margin: 32px 0;
+      position: relative;
+    }
+
+    .orchestrator-block::before {
+      content: 'ORQUESTRADOR MESTRE';
+      position: absolute;
+      top: -9px; left: 20px;
+      background: var(--surface);
+      padding: 0 10px;
+      font-family: var(--ff-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--amber);
+    }
+
+    .ob-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .ob-col h5 {
+      font-family: var(--ff-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: var(--amber2);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .ob-col ul {
+      list-style: none;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .ob-col li {
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .ob-col li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--amber);
+      font-family: var(--ff-mono);
+    }
+
+    /* ── LOOP PROTOCOL ─────────────────────────────────────── */
+    .loop-protocol {
+      margin: 48px 0;
+    }
+
+    .loop-protocol h3 {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      color: var(--white);
+      letter-spacing: 0.05em;
+      margin-bottom: 24px;
+    }
+
+    .loop-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    .loop-steps::before {
+      content: '';
+      position: absolute;
+      top: 24px; left: 24px;
+      width: 1px;
+      bottom: 24px;
+      background: repeating-linear-gradient(180deg, var(--border2) 0, var(--border2) 6px, transparent 6px, transparent 12px);
+    }
+
+    .loop-step {
+      display: flex;
+      gap: 20px;
+      padding: 16px 0;
+      position: relative;
+    }
+
+    .ls-node {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      flex-shrink: 0;
+      border: 2px solid;
+      background: var(--bg2);
+      position: relative;
+      z-index: 1;
+    }
+
+    .ls-content { flex: 1; padding-top: 10px; }
+
+    .ls-content h4 {
+      font-family: var(--ff-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .ls-content p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      text-align: justify;
+    }
+
+    .ls-amber { border-color: var(--amber); color: var(--amber); }
+    .ls-stat  { border-color: var(--truth-stat); color: var(--truth-stat); }
+    .ls-logic { border-color: var(--truth-logic); color: var(--truth-logic); }
+    .ls-prag  { border-color: var(--truth-prag); color: var(--truth-prag); }
+    .ls-copper { border-color: var(--copper); color: var(--copper2); }
+
+    /* ── CONCLUSION ────────────────────────────────────────── */
+    .conclusion {
+      background:
+        radial-gradient(ellipse at 30% 50%, rgba(232,168,50,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 50%, rgba(184,115,64,0.06) 0%, transparent 60%),
+        var(--bg2);
+      border-top: 1px solid var(--border2);
+      padding: 80px 0;
+    }
+
+    .conclusion .section-header h2 { font-size: clamp(2.5rem, 5vw, 4rem); }
+
+    .paradigm-block {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 24px;
+      align-items: center;
+      margin: 40px 0;
+    }
+
+    .pb-from, .pb-to {
+      padding: 24px 28px;
+      border-radius: 6px;
+    }
+
+    .pb-from {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+    }
+
+    .pb-to {
+      background: rgba(232,168,50,0.08);
+      border: 1px solid rgba(232,168,50,0.3);
+    }
+
+    .pb-label {
+      font-family: var(--ff-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .pb-from .pb-label { color: var(--text-muted); }
+    .pb-to .pb-label   { color: var(--amber); }
+
+    .pb-from p, .pb-to p {
+      font-family: var(--ff-body);
+      font-size: 1rem;
+      font-style: italic;
+    }
+
+    .pb-from p { color: var(--text-dim); }
+    .pb-to p   { color: var(--amber2); }
+
+    .pb-arrow {
+      font-size: 2rem;
+      color: var(--amber);
+      font-family: var(--ff-mono);
+      text-align: center;
+    }
+
+    .closing-quote {
+      text-align: center;
+      padding: 48px 0 0;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    .closing-quote blockquote {
+      font-family: var(--ff-body);
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--text-dim);
+      max-width: 680px;
+      margin: 0 auto 16px;
+      line-height: 1.7;
+    }
+
+    .closing-quote cite {
+      font-family: var(--ff-mono);
+      font-size: 0.68rem;
+      color: var(--amber);
+      letter-spacing: 0.15em;
+    }
+
+    /* ── FORMULA ───────────────────────────────────────────── */
+    .formula-block {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      padding: 20px 28px;
+      font-family: var(--ff-mono);
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      overflow-x: auto;
+      margin: 24px 0;
+    }
+
+    .formula-block .f-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .formula-block .f-eq { color: var(--amber); font-weight: 500; }
+    .formula-block .f-stat  { color: #80b8f8; }
+    .formula-block .f-logic { color: #70e0a0; }
+    .formula-block .f-prag  { color: #f09090; }
+
+    /* ── FOOTER ────────────────────────────────────────────── */
+    footer {
+      background: #04030a;
+      border-top: 1px solid var(--border);
+      padding: 28px 40px;
+      text-align: center;
+      font-family: var(--ff-mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      line-height: 1.8;
+    }
+
+    footer span { color: var(--amber); opacity: 0.8; }
+
+    @media (max-width: 768px) {
+      .truths-grid { grid-template-columns: 1fr; }
+      .paradigm-block { grid-template-columns: 1fr; }
+      .pb-arrow { transform: rotate(90deg); }
+      .ca-row { grid-template-columns: 32px 1fr; }
+      .ca-truth-tag { display: none; }
+      .ob-grid { grid-template-columns: 1fr; }
+      .container { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<section class="hero z1">
+  <div class="circuit-lines">
+    <svg viewBox="0 0 1200 700" preserveAspectRatio="none">
+      <path class="cl-path" d="M0,200 H300 V400 H600 V200 H900 V500 H1200"/>
+      <path class="cl-path" d="M0,600 H200 V300 H500 V500 H800 V100 H1200"/>
+      <path class="cl-path" d="M100,0 V200 H400 V450 H700 V150 H1100 V700"/>
+      <path class="cl-path" d="M900,0 V300 H600 V500 H300 V650"/>
+      <!-- Nodes -->
+      <circle cx="300" cy="400" r="4" fill="#e8a832" opacity="0.4"/>
+      <circle cx="600" cy="200" r="4" fill="#3a8ee8" opacity="0.4"/>
+      <circle cx="900" cy="500" r="4" fill="#38c878" opacity="0.4"/>
+      <circle cx="500" cy="500" r="4" fill="#e85050" opacity="0.4"/>
+      <circle cx="700" cy="150" r="4" fill="#e8a832" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <div class="hero-layer">MÉTODO CORAGEM™ · CAMADA 9 · QUANDO APLICÁVEL</div>
+  <h1>CONFIG<br><span>AGÊNTICA</span></h1>
+  <div class="hero-sub">Arquitetura Multi-Agente com Retroalimentação Epistêmica</div>
+  <p class="hero-desc">
+    A nona camada do Método Coragem™ — ativada quando a complexidade do problema 
+    exige múltiplos agentes especializados operando sob as três verdades 
+    com loops de retroalimentação que corrigem, pivotam e sintetizam em tempo real.
+  </p>
+
+  <div class="three-truths">
+    <div class="truth-badge tb-stat">
+      <span class="dot" style="background:var(--truth-stat)"></span>
+      Verdade Probabilística
+    </div>
+    <div class="truth-badge tb-logic">
+      <span class="dot" style="background:var(--truth-logic)"></span>
+      Verdade Lógica
+    </div>
+    <div class="truth-badge tb-prag">
+      <span class="dot" style="background:var(--truth-prag)"></span>
+      Verdade Pragmática
+    </div>
+  </div>
+
+  <div class="hero-scroll">↓ SCROLL PARA EXPLORAR ↓</div>
+</section>
+
+<!-- ══ FUNDAMENTO ════════════════════════════════════════════ -->
+<div class="z1" style="background:var(--bg3); border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-eyebrow">Fundamento Epistêmico</div>
+        <h2>O que é a Config Agêntica?</h2>
+        <p>A camada que transforma um prompt em uma orquestra cognitiva</p>
+      </div>
+
+      <div class="def-box">
+        <p>
+          <strong>Config Agêntica</strong> é a nona camada do Método Coragem™, ativada quando a complexidade epistemológica do problema 
+          exige não um único processo inferencial, mas uma <strong>rede de agentes especializados</strong> — 
+          cada um operando sobre uma das três verdades, conectados por loops de retroalimentação que permitem 
+          pivotagem, correção e síntese emergente em tempo real.
+        </p>
+        <p>
+          Não é paralelismo simples. É <strong>heterarquia epistêmica</strong>: agentes com autoridades diferentes, 
+          feedbacks assimétricos, e um Orquestrador que não apenas coordena — mas que reconhece quando o sistema 
+          deve colapsar sua hipótese atual e reconstruir a partir das falhas detectadas.
+        </p>
+      </div>
+
+      <div class="prose">
+        <p>
+          A Config Agêntica emerge de uma constatação filosófica fundamental: nenhuma instância cognitiva singular 
+          pode operar com excelência simultânea nas três camadas de verdade que o Método Coragem™ reconhece. 
+          <span class="ht ht-stat">A Verdade Probabilística</span> exige exaustão empírica e rigor estatístico — 
+          o mapeamento do que o mundo provavelmente é com base em evidências. 
+          <span class="ht ht-logic">A Verdade Lógica</span> exige coerência interna perfeita — 
+          o teste de consistência entre premissas, regras e conclusões. 
+          <span class="ht ht-prag">A Verdade Pragmática</span> exige adequação ao mundo real — 
+          o teste de se a solução funciona quando confrontada com as fricções da realidade concreta.
+        </p>
+        <p>
+          Em um prompt único, essas três verdades competem por atenção e frequentemente se contradizem. 
+          A Config Agêntica resolve isso pela <strong>especialização e separação de concerns epistêmicos</strong>, 
+          seguida por síntese orquestrada. O que um único modelo comprimiria em uma resposta ambígua, 
+          o sistema agêntico separa, tensiona, valida e reconstrói — com cada contradição sendo explicitamente 
+          resolvida por um agente de pivotagem que tem autoridade de reescrever o trabalho dos demais.
+        </p>
+      </div>
+
+      <!-- Three Truths Grid -->
+      <div class="truths-grid">
+        <div class="truth-cell tc-stat">
+          <div class="truth-cell-header">
+            <div class="truth-orb">P</div>
+            <h4>Verdade Probabilística</h4>
+          </div>
+          <p>
+            Opera sobre o que <em>provavelmente é verdadeiro</em> dado o corpus de evidências disponível. 
+            Trabalha com distribuições, tendências, frequências e inferências estatísticas. 
+            É a verdade do <em>mundo empírico</em> — aquilo que os dados dizem, independente do que gostaríamos que fosse.
+          </p>
+          <div class="agent-ex">
+            Agente Estatístico: mapeia frequências,<br>
+            volumes, tendências e correlações brutas.<br>
+            Foco: o que os dados mostram agora.
+          </div>
+        </div>
+        <div class="truth-cell tc-logic">
+          <div class="truth-cell-header">
+            <div class="truth-orb">L</div>
+            <h4>Verdade Lógica</h4>
+          </div>
+          <p>
+            Opera sobre o que é <em>coerente internamente</em> dado o sistema de regras, leis, premissas 
+            e frameworks em vigor. É a verdade do <em>sistema formal</em> — 
+            aquilo que é necessariamente verdadeiro dado o conjunto de axiomas aceitos.
+          </p>
+          <div class="agent-ex">
+            Agente Lógico: verifica consistência com<br>
+            Warnings, regras, leis e frameworks ativos.<br>
+            Foco: o que pode ser dito sem contradição.
+          </div>
+        </div>
+        <div class="truth-cell tc-prag">
+          <div class="truth-cell-header">
+            <div class="truth-orb">Π</div>
+            <h4>Verdade Pragmática</h4>
+          </div>
+          <p>
+            Opera sobre o que <em>funciona na prática</em> quando exposto às fricções do mundo real — 
+            comportamento humano, cultura, limitações operacionais, viabilidade de execução. 
+            É a verdade do <em>mundo vivido</em> — aquilo que sobrevive ao contato com a realidade.
+          </p>
+          <div class="agent-ex">
+            Agente Pragmático: valida viabilidade real,<br>
+            adequação cultural e executabilidade.<br>
+            Foco: o que realmente vai funcionar.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RETROALIMENTAÇÃO ══════════════════════════════════════ -->
+<div class="z1" style="background:var(--bg);">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-eyebrow">O Princípio Central</div>
+        <h2>Retroalimentação Agêntica</h2>
+        <p>O loop que transforma erro em inteligência sistêmica</p>
+      </div>
+
+      <div class="prose">
+        <p>
+          A maioria dos sistemas multi-agente opera em <strong>pipeline linear</strong>: Agente 1 → Agente 2 → Agente 3 → Output. 
+          Este modelo é epistemicamente frágil: um erro no Agente 1 se propaga e amplifica pelos demais sem correção. 
+          A Config Agêntica é construída sobre um princípio radicalmente diferente — 
+          a <span class="ht">retroalimentação como mecanismo de inteligência emergente</span>.
+        </p>
+        <p>
+          No modelo de retroalimentação agêntica, o Orquestrador (ou Agente Pivot) monitora os outputs de todos os 
+          agentes especializados e detecta quando há <strong>contradição entre verdades</strong>: 
+          quando o Estatístico aponta para X, mas o Lógico identifica que X viola um constraint, 
+          e o Pragmático sinaliza que mesmo X modificado não funcionaria no mundo real — 
+          o sistema não colapsa. Ele pivota. Reinjeta o problema com novos parâmetros.
+        </p>
+        <p>
+          Isso é análogo ao princípio de <span class="ht">feedback negativo</span> em sistemas de controle: 
+          o erro não é falha — é o sinal que corrige o sistema. Cada contradição detectada entre agentes 
+          é informação valiosa que nenhum agente sozinho poderia gerar.
+        </p>
+      </div>
+
+      <!-- Feedback Diagram -->
+      <div class="feedback-diagram">
+        <div class="fd-title">PROTOCOLO DE RETROALIMENTAÇÃO — FLUXO EPISTÊMICO</div>
+
+        <div class="agent-flow">
+          <div class="agent-node">
+            <div class="agent-hex" style="background:rgba(58,142,232,0.1);border-color:var(--truth-stat);color:var(--truth-stat);">
+              <div class="agent-icon">📊</div>
+              <div class="agent-num">A·STAT</div>
+            </div>
+            <div class="agent-label">Estatístico<br>Probabilístico</div>
+          </div>
+          <div class="flow-arrow">
+            <div class="fa-line"></div>
+            <div class="fa-tip">▶</div>
+          </div>
+          <div class="agent-node">
+            <div class="agent-hex" style="background:rgba(56,200,120,0.1);border-color:var(--truth-logic);color:var(--truth-logic);">
+              <div class="agent-icon">⚖️</div>
+              <div class="agent-num">A·LOGIC</div>
+            </div>
+            <div class="agent-label">Lógico<br>Normativo</div>
+          </div>
+          <div class="flow-arrow">
+            <div class="fa-line"></div>
+            <div class="fa-tip">▶</div>
+          </div>
+          <div class="agent-node">
+            <div class="agent-hex" style="background:rgba(232,80,80,0.1);border-color:var(--truth-prag);color:var(--truth-prag);">
+              <div class="agent-icon">🌍</div>
+              <div class="agent-num">A·PRAG</div>
+            </div>
+            <div class="agent-label">Pragmático<br>Real-World</div>
+          </div>
+          <div class="flow-arrow">
+            <div class="fa-line" style="background-color:var(--copper)"></div>
+            <div class="fa-tip" style="color:var(--amber)">▶</div>
+          </div>
+          <div class="agent-node">
+            <div class="agent-hex" style="background:var(--amber-dim);border-color:var(--amber);color:var(--amber);">
+              <div class="agent-icon">🔄</div>
+              <div class="agent-num">ORCH</div>
+            </div>
+            <div class="agent-label">Orquestrador<br>Pivot Master</div>
+          </div>
+          <div class="flow-arrow">
+            <div class="fa-line"></div>
+            <div class="fa-tip">▶</div>
+          </div>
+          <div class="agent-node">
+            <div class="agent-hex" style="background:rgba(184,115,64,0.15);border-color:var(--copper);color:var(--copper2);">
+              <div class="agent-icon">✦</div>
+              <div class="agent-num">OUTPUT</div>
+            </div>
+            <div class="agent-label">Síntese<br>Final</div>
+          </div>
+        </div>
+
+        <!-- Feedback arc SVG -->
+        <div style="text-align:center; margin: 0 0 16px;">
+          <svg width="600" height="50" viewBox="0 0 600 50" style="max-width:100%; overflow:visible;">
+            <defs>
+              <marker id="arrowback" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                <path d="M8,0 L0,4 L8,8 Z" fill="var(--copper2)" opacity="0.7"/>
+              </marker>
+            </defs>
+            <path class="fa-path" d="M560,10 Q560,40 300,40 Q40,40 40,10" marker-start="url(#arrowback)" stroke="var(--copper2)" opacity="0.6"/>
+            <text x="300" y="34" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="var(--copper2)" opacity="0.7" letter-spacing="2">RETROALIMENTAÇÃO — CONTRADIÇÃO DETECTADA → PIVOTAGEM</text>
+          </svg>
+        </div>
+
+        <div class="pivot-indicator">
+          <span class="pivot-icon">⚡</span>
+          <div class="pivot-text">
+            SE (output(A·LOGIC) contradiz output(A·STAT)) OU (output(A·PRAG) rejeita síntese) →<br>
+            ORCH.pivotar(constraints=novo_vetor) → reinjetar A·STAT com novos parâmetros → loop
+          </div>
+        </div>
+      </div>
+
+      <!-- Formula -->
+      <div class="formula-block">
+        <div class="f-label">FÓRMULA DA RETROALIMENTAÇÃO AGÊNTICA</div>
+        <div>
+          <span class="f-eq">Síntese</span>(t) = <span class="f-prag">Π</span>( <span class="f-logic">L</span>( <span class="f-stat">P</span>(dados, t) ), constraints ) ∧ viável(mundo_real)<br><br>
+          SE <span class="f-logic">L</span>( <span class="f-stat">P</span>(t) ) → contradição: &nbsp; reinjetar com <span class="f-eq">Ω</span>(t+1) = <span class="f-eq">pivotar</span>(<span class="f-eq">Ω</span>(t), erro_detectado)<br>
+          SE <span class="f-prag">Π</span>( síntese ) → inviável: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; reinjetar com <span class="f-eq">Ω</span>(t+1) = <span class="f-eq">pivotar</span>(<span class="f-eq">Ω</span>(t), fricção_real)
+        </div>
+      </div>
+
+      <!-- Loop Protocol -->
+      <div class="loop-protocol">
+        <h3>Protocolo do Loop Epistêmico</h3>
+        <div class="loop-steps">
+          <div class="loop-step">
+            <div class="ls-node ls-amber">0</div>
+            <div class="ls-content">
+              <h4>INICIALIZAÇÃO — Injeção das 8 Camadas Anteriores</h4>
+              <p>O Orquestrador recebe o vetor semântico completo do Método Coragem™ (Manifesto + Goal + Warnings + Constraints + Constructs + Contexto + Output + Paramprompting) e distribui o subconjunto relevante para cada agente especializado.</p>
+            </div>
+          </div>
+          <div class="loop-step">
+            <div class="ls-node ls-stat">1</div>
+            <div class="ls-content">
+              <h4>FASE ESTATÍSTICA — Mapeamento Probabilístico</h4>
+              <p>O Agente Estatístico executa busca exaustiva, mapeamento de frequências, análise de tendências e produz um output probabilístico: <em>o que os dados dizem é mais provável</em>. Sem julgamento normativo ainda.</p>
+            </div>
+          </div>
+          <div class="loop-step">
+            <div class="ls-node ls-logic">2</div>
+            <div class="ls-content">
+              <h4>FASE LÓGICA — Validação Normativa</h4>
+              <p>O Agente Lógico recebe o output do Agente Estatístico e o submete ao sistema de regras ativo (Warnings, leis, constraints éticos, frameworks formais). Identifica contradições e sinaliza para o Orquestrador.</p>
+            </div>
+          </div>
+          <div class="loop-step">
+            <div class="ls-node ls-prag">3</div>
+            <div class="ls-content">
+              <h4>FASE PRAGMÁTICA — Teste de Adequação ao Mundo Real</h4>
+              <p>O Agente Pragmático recebe a síntese (Estatístico + Lógico) e a submete ao teste de realidade: cultura, comportamento humano, viabilidade operacional, fricções de mercado. Retorna viabilidade e ajustes necessários.</p>
+            </div>
+          </div>
+          <div class="loop-step">
+            <div class="ls-node ls-amber">4</div>
+            <div class="ls-content">
+              <h4>ORQUESTRAÇÃO — Síntese ou Pivotagem</h4>
+              <p>O Orquestrador cruza os três outputs. Se há coerência: produz síntese final. Se há contradição: identifica o ponto de conflito, reformula os parâmetros de busca, e reinicia o loop com vetor corrigido. O número de iterações é limitado por critério de convergência.</p>
+            </div>
+          </div>
+          <div class="loop-step">
+            <div class="ls-node ls-copper">∞</div>
+            <div class="ls-content">
+              <h4>CRITÉRIO DE PARADA — Convergência Epistêmica</h4>
+              <p>O loop termina quando: (a) as três verdades convergem numa síntese sem contradição detectada, (b) o critério de profundidade máxima é atingido, ou (c) o Orquestrador declara que a contradição é irresolvível e a entrega como <em>paradoxo produtivo</em> documentado.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CASOS DE USO ══════════════════════════════════════════ -->
+<div class="z1" style="background:var(--bg3);">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-eyebrow">Aplicações Reais</div>
+        <h2>Casos de Uso Agênticos</h2>
+        <p>A Config Agêntica em operação real — diferentes domínios, mesma arquitetura epistêmica</p>
+      </div>
+
+      <div class="case-section">
+        <div class="case-tabs">
+          <button class="case-tab active" onclick="showCase('commerce')">Inteligência Comercial</button>
+          <button class="case-tab" onclick="showCase('legal')">Pesquisa Jurídica</button>
+          <button class="case-tab" onclick="showCase('security')">Segurança Ofensiva</button>
+          <button class="case-tab" onclick="showCase('science')">Pesquisa Científica</button>
+          <button class="case-tab" onclick="showCase('psico')">Interpretação Profunda</button>
+          <button class="case-tab" onclick="showCase('strategy')">Decisão Estratégica</button>
+          <button class="case-tab" onclick="showCase('creative')">Produção Criativa</button>
+        </div>
+
+        <!-- COMMERCE -->
+        <div class="case-pane active" id="case-commerce">
+          <h3>Inteligência Comercial</h3>
+          <div class="case-context">DOMÍNIO: E-COMMERCE · RETAIL · PRICING · SUPPLY CHAIN</div>
+          <p class="case-desc">
+            Análise de viabilidade de produto considerando simultaneamente o que os dados de mercado sugerem 
+            (demanda, tendência, concorrência), o que as regras operacionais permitem (margens mínimas, 
+            restrições logísticas, políticas de plataforma) e o que o consumidor real vai aceitar comprar.
+          </p>
+          <div class="case-agents">
+            <div class="ca-row ca-stat">
+              <div class="ca-num">A·1</div>
+              <div class="ca-name">Analista de Mercado<br>(Empiricista)</div>
+              <div class="ca-desc">
+                Mapeia dados brutos de demanda, volume de buscas, tendências de categoria, preços praticados por concorrentes e histórico de vendas. Opera sobre evidências quantitativas: nenhum julgamento de viabilidade nesta fase. Entrega a fotografia probabilística do mercado.
+              </div>
+              <span class="ca-truth-tag tag-stat">VERDADE PROB.</span>
+            </div>
+            <div class="ca-row ca-logic">
+              <div class="ca-num">A·2</div>
+              <div class="ca-name">Auditor Operacional<br>(Normativo)</div>
+              <div class="ca-desc">
+                Valida a coerência entre os dados do A·1 e os constraints operacionais: margens mínimas definidas, regras da plataforma, restrições logísticas, políticas de devolução e compliance com regulamentações. Filtra o que é empiricamente atrativo mas operacionalmente inviável.
+              </div>
+              <span class="ca-truth-tag tag-logic">VERDADE LÓGICA</span>
+            </div>
+            <div class="ca-row ca-prag">
+              <div class="ca-num">A·3</div>
+              <div class="ca-name">Analista de Comportamento<br>(Real-World)</div>
+              <div class="ca-desc">
+                Avalia se o consumidor real vai de fato comprar — considerando contexto cultural, sazonalidade, comportamento pós-pesquisa, fricções de jornada e adequação do produto ao perfil do comprador típico da plataforma. O que funciona nos dados pode não funcionar na realidade da compra.
+              </div>
+              <span class="ca-truth-tag tag-prag">VERDADE PRAG.</span>
+            </div>
+            <div class="ca-row ca-pivot">
+              <div class="ca-num">A·4</div>
+              <div class="ca-name">Orquestrador de Oferta<br>(Pivot Master)</div>
+              <div class="ca-desc">
+                Cruza os três outputs. Se há margem mas baixa conversão esperada (A·3 rejeita): propõe reformulação da oferta — bundle, bundle temático, reposicionamento de categoria. Se há demanda mas constraint operacional (A·2 rejeita): busca fornecedor alternativo ou renegociação de parâmetros.
+              </div>
+              <span class="ca-truth-tag tag-pivot">ORCHESTRATOR</span>
+            </div>
+          </div>
+          <div class="pivot-box">
+            <div class="pb-label">⚡ TENSÃO CENTRAL E PIVOTAGEM</div>
+            <p>
+              A contradição clássica: produto com alta demanda aparente (A·1) mas com margin squeeze que A·2 rejeita, ou com comportamento de compra que A·3 questiona. O pivô não descarta o produto — requalifica a oferta. A mesma unidade física pode ter cinco configurações de oferta distintas; o A·4 encontra a que satisfaz as três verdades simultaneamente.
+            </p>
+          </div>
+        </div>
+
+        <!-- LEGAL -->
+        <div class="case-pane" id="case-legal">
+          <h3>Pesquisa e Tese Jurídica</h3>
+          <div class="case-context">DOMÍNIO: DIREITO · PESQUISA JURÍDICA · CONSTRUÇÃO DE ARGUMENTAÇÃO</div>
+          <p class="case-desc">
+            Construção de teses jurídicas robustas que equilibram o que a jurisprudência empiricamente mostra 
+            (precedentes existentes), o que os frameworks normativos permitem (coerência com o sistema de regras) 
+            e o que tribunais reais aceitarão na prática (viabilidade processual concreta).
+          </p>
+          <div class="case-agents">
+            <div class="ca-row ca-stat">
+              <div class="ca-num">A·1</div>
+              <div class="ca-name">Pesquisador de Precedentes<br>(Crawler Jurídico)</div>
+              <div class="ca-desc">
+                Busca exaustiva de jurisprudência relevante: decisões em repositórios oficiais, tendências de tribunais por região, frequência de determinados entendimentos, evolução temporal da interpretação. Mapeia o "estado empírico" do direito sobre o tema — o que os tribunais têm efetivamente decidido.
+              </div>
+              <span class="ca-truth-tag tag-stat">VERDADE PROB.</span>
+            </div>
+            <div class="ca-row ca-logic">
+              <div class="ca-num">A·2</div>
+              <div class="ca-name">Analista de Coerência<br>(Hermeneuta)</div>
+              <div class="ca-desc">
+                Verifica se a tese é internamente consistente com o sistema normativo vigente: leis, princípios constitucionais, hierarquia de fontes e coerência entre os precedentes selecionados pelo A·1. Identifica contradições internas e pontos que precisam de distinção ou qualificação.
+              </div>
+              <span class="ca-truth-tag tag-logic">VERDADE LÓGICA</span>
+            </div>
+            <div class="ca-row ca-prag">
+              <div class="ca-num">A·3</div>
+              <div class="ca-name">Auditor de Risco<br>(Compliance & Vigência)</div>
+              <div class="ca-desc">
+                Verifica vigência real dos precedentes: busca por revogações, alterações, entendimentos superados e precedentes vinculantes posteriores. Avalia o risco concreto de usar um argumento que o adversário pode virar contra a tese. Foco na defensabilidade prática perante o tribunal específico.
+              </div>
+              <span class="ca-truth-tag tag-prag">VERDADE PRAG.</span>
+            </div>
+            <div class="ca-row ca-pivot">
+              <div class="ca-num">A·4</div>
+              <div class="ca-name">Sintetizador de Tese<br>(Redator Estratégico)</div>
+              <div class="ca-desc">
+                Cruza as três análises. Se A·3 detecta precedente fragilizado: substitui por jurisprudência mais robusta ou reescreve o argumento para não depender do precedente vulnerável. Se A·2 detecta incoerência interna: reestrutura a cadeia argumentativa. Nunca entrega tese com ponto fraco conhecido.
+              </div>
+              <span class="ca-truth-tag tag-pivot">ORCHESTRATOR</span>
+            </div>
+          </div>
+          <div class="pivot-box">
+            <div class="pb-label">⚡ TENSÃO CENTRAL E PIVOTAGEM</div>
+            <p>
+              O risco principal é epistêmico: uma tese juridicamente fluente pode estar empiricamente fragilizada (precedente overruled) ou pragmaticamente indefensável (tribunal regional tem entendimento contrário consolidado). O A·4 garante que a tese sobreviva aos três filtros antes de ser entregue — não apenas ao filtro da coerência retórica.
+            </p>
+          </div>
+        </div>
+
+        <!-- SECURITY -->
+        <div class="case-pane" id="case-security">
+          <h3>Segurança Ofensiva / Pentest</h3>
+          <div class="case-context">DOMÍNIO: CYBERSECURITY · RED TEAM · VULNERABILITY RESEARCH</div>
+          <p class="case-desc">
+            Análise de superfície de ataque e construção de vetores de exploração que integram o que as 
+            vulnerabilidades empiricamente presentes sugerem, o que os frameworks de ataque permitem 
+            formalmente e o que é operacionalmente executável dado o ambiente real do alvo.
+          </p>
+          <div class="case-agents">
+            <div class="ca-row ca-stat">
+              <div class="ca-num">A·1</div>
+              <div class="ca-name">Scanner de Superfície<br>(OSINT + Enum)</div>
+              <div class="ca-desc">
+                Mapeamento exaustivo da superfície de ataque: enumeração de serviços expostos, versões de software, configurações públicas, vazamentos de informação em repositórios e registros DNS. Produz inventário bruto de vetores potenciais sem priorização — o mapa probabilístico completo da superfície.
+              </div>
+              <span class="ca-truth-tag tag-stat">VERDADE PROB.</span>
+            </div>
+            <div class="ca-row ca-logic">
+              <div class="ca-num">A·2</div>
+              <div class="ca-name">Analista de CVEs<br>(Framework Técnico)</div>
+              <div class="ca-desc">
+                Para cada vetor identificado pelo A·1, verifica CVEs associados, exploits conhecidos, condições necessárias para exploração e dependências de configuração. Filtra o que é teoricamente vulnerável mas onde as condições de exploração não se sustentam logicamente no contexto do alvo.
+              </div>
+              <span class="ca-truth-tag tag-logic">VERDADE LÓGICA</span>
+            </div>
+            <div class="ca-row ca-prag">
+              <div class="ca-num">A·3</div>
+              <div class="ca-name">Validador de Cadeia<br>(Exploitability)</div>
+              <div class="ca-desc">
+                Avalia a cadeia de exploração completa no contexto real: defesas ativas, capacidade de detecção, janelas de tempo, ruído gerado e viabilidade de pós-exploração. O que é teoricamente explorável pode ser praticamente inviável dado o ambiente de defesa específico.
+              </div>
+              <span class="ca-truth-tag tag-prag">VERDADE PRAG.</span>
+            </div>
+            <div class="ca-row ca-pivot">
+              <div class="ca-num">A·4</div>
+              <div class="ca-name">Red Team Orchestrator<br>(Attack Chain Builder)</div>
+              <div class="ca-desc">
+                Prioriza vetores que sobrevivem às três análises e propõe cadeias de ataque combinadas. Se um vetor é rejeitado pelo A·3 (defesa ativa eficaz), explora possibilidade de contornar pela combinação com outro vetor de A·1. Constrói o relatório final com criticidade calibrada pelas três dimensões.
+              </div>
+              <span class="ca-truth-tag tag-pivot">ORCHESTRATOR</span>
+            </div>
+          </div>
+          <div class="pivot-box">
+            <div class="pb-label">⚡ TENSÃO CENTRAL E PIVOTAGEM</div>
+            <p>
+              A contradição frequente: vetor com CVE crítico (A·1 e A·2 validam) mas ambiente de defesa que detecta a exploração antes de completar (A·3 rejeita). O pivô busca cadeia alternativa que atinja o mesmo objetivo com menor ruído, ou propõe a combinação de múltiplos vetores de baixa visibilidade individual.
+            </p>
+          </div>
+        </div>
+
+        <!-- SCIENCE -->
+        <div class="case-pane" id="case-science">
+          <h3>Pesquisa Científica</h3>
+          <div class="case-context">DOMÍNIO: CIÊNCIA · FORMULAÇÃO DE HIPÓTESES · REVISÃO DE LITERATURA</div>
+          <p class="case-desc">
+            Desenvolvimento de hipóteses de pesquisa que integram o que a literatura empírica já demonstrou, 
+            o que os frameworks teóricos do campo permitem formular de forma coerente, 
+            e o que é metodologicamente testável com os recursos e contextos disponíveis.
+          </p>
+          <div class="case-agents">
+            <div class="ca-row ca-stat">
+              <div class="ca-num">A·1</div>
+              <div class="ca-name">Revisor de Literatura<br>(Corpus Empírico)</div>
+              <div class="ca-desc">
+                Mapeamento sistemático da produção científica relevante: estudos publicados, tamanhos de efeito, replicações, meta-análises e tendências de resultado no campo. Produz o mapa probabilístico do que a evidência empírica acumulada efetivamente suporta — sem interpretação teórica ainda.
+              </div>
+              <span class="ca-truth-tag tag-stat">VERDADE PROB.</span>
+            </div>
+            <div class="ca-row ca-logic">
+              <div class="ca-num">A·2</div>
+              <div class="ca-name">Teórico do Campo<br>(Coerência Conceitual)</div>
+              <div class="ca-desc">
+                Verifica se a hipótese formulada é internamente coerente com os frameworks teóricos dominantes do campo, se os construtos são operacionalizados de forma consistente e se a cadeia lógica entre premissas e hipótese é válida. Detecta contradições com teoria estabelecida.
+              </div>
+              <span class="ca-truth-tag tag-logic">VERDADE LÓGICA</span>
+            </div>
+            <div class="ca-row ca-prag">
+              <div class="ca-num">A·3</div>
+              <div class="ca-name">Designer Metodológico<br>(Testabilidade)</div>
+              <div class="ca-desc">
+                Avalia se a hipótese é efetivamente testável com métodos disponíveis, se os instrumentos de medição são adequados, se o tamanho amostral necessário é viável e se as variáveis de confusão podem ser controladas. Uma hipótese pode ser teoricamente interessante mas metodologicamente inviável.
+              </div>
+              <span class="ca-truth-tag tag-prag">VERDADE PRAG.</span>
+            </div>
+            <div class="ca-row ca-pivot">
+              <div class="ca-num">A·4</div>
+              <div class="ca-name">Arquiteto de Pesquisa<br>(Síntese Propositiva)</div>
+              <div class="ca-desc">
+                Integra as três perspectivas para propor a hipótese na sua forma mais robusta: empiricamente informada, teoricamente coerente e metodologicamente viável. Quando há tensão irresolúvel, delimita o escopo da hipótese às condições onde as três verdades convergem — ou declara a contradição como lacuna de pesquisa.
+              </div>
+              <span class="ca-truth-tag tag-pivot">ORCHESTRATOR</span>
+            </div>
+          </div>
+          <div class="pivot-box">
+            <div class="pb-label">⚡ TENSÃO CENTRAL E PIVOTAGEM</div>
+            <p>
+              A tensão científica clássica: hipótese teoricamente elegante (A·2 valida) mas que contradiz meta-análises existentes (A·1 questiona) e cuja testagem rigorosa é metodologicamente proibitiva (A·3 rejeita). O A·4 pode propor uma versão restrita e testável da hipótese que ainda contribui com a questão central, ou recomendar a revisão da questão de pesquisa.
+            </p>
+          </div>
+        </div>
+
+        <!-- PSICO -->
+        <div class="case-pane" id="case-psico">
+          <h3>Interpretação Profunda</h3>
+          <div class="case-context">DOMÍNIO: PSICOLOGIA · ANÁLISE SIMBÓLICA · SISTEMAS HUMANOS</div>
+          <p class="case-desc">
+            Análise de conteúdo psicológico complexo — sonhos, padrões de comportamento, dinâmicas 
+            relacionais — que requer integrar o que os padrões empiricamente identificados sugerem, 
+            o que os frameworks interpretativos permitem formular e o que funciona transformadoramente na prática clínica.
+          </p>
+          <div class="case-agents">
+            <div class="ca-row ca-stat">
+              <div class="ca-num">A·1</div>
+              <div class="ca-name">Analista de Padrões<br>(Empiricista Simbólico)</div>
+              <div class="ca-desc">
+                Identifica padrões recorrentes, símbolos, temas e frequências no material apresentado. Mapeia o corpus empírico do caso: o que aparece, com que frequência, em que contexto. Opera como observador objetivo antes de interpretar — o inventário do que realmente está presente no material.
+              </div>
+              <span class="ca-truth-tag tag-stat">VERDADE PROB.</span>
+            </div>
+            <div class="ca-row ca-logic">
+              <div class="ca-num">A·2</div>
+              <div class="ca-name">Intérprete Teórico<br>(Framework Conceitual)</div>
+              <div class="ca-desc">
+                Aplica frameworks interpretativos ao corpus identificado pelo A·1 — verificando coerência interna da interpretação, consistência com o framework teórico escolhido e validade das inferências causais. Garante que a interpretação seja internamente consistente e não contraditória.
+              </div>
+              <span class="ca-truth-tag tag-logic">VERDADE LÓGICA</span>
+            </div>
+            <div class="ca-row ca-prag">
+              <div class="ca-num">A·3</div>
+              <div class="ca-name">O Provocador<br>(Teste de Resistência)</div>
+              <div class="ca-desc">
+                Questiona a interpretação do A·2: onde ela pode ser racionalização? Onde o ego a usará para reforçar defesas em vez de superá-las? O que a interpretação ignora ou suaviza? Introduz fricção epistêmica deliberada — sua função não é validar, mas pressionar até que o que resta seja genuíno.
+              </div>
+              <span class="ca-truth-tag tag-prag">VERDADE PRAG.</span>
+            </div>
+            <div class="ca-row ca-pivot">
+              <div class="ca-num">A·4</div>
+              <div class="ca-name">Sintetizador Transformador<br>(Parecer Integrativo)</div>
+              <div class="ca-desc">
+                Une os três aportes. Quando A·3 contradiz A·2 — o caso mais comum — o A·4 não escolhe um lado: apresenta a tensão como material de trabalho em si. A contradição entre a interpretação coerente e a provocação do cético é frequentemente mais valiosa do que qualquer síntese prematura.
+              </div>
+              <span class="ca-truth-tag tag-pivot">ORCHESTRATOR</span>
+            </div>
+          </div>
+          <div class="pivot-box">
+            <div class="pb-label">⚡ TENSÃO CENTRAL E PIVOTAGEM</div>
+            <p>
+              Neste domínio a contradição entre agentes frequentemente <em>não deve ser resolvida</em> — deve ser habitada. O paradoxo produtivo entre a interpretação teoricamente elegante (A·2) e a resistência que o A·3 aponta é, em si, o ponto de maior densidade clínica. O A·4 entrega a tensão documentada, não a síntese forçada.
+            </p>
+          </div>
+        </div>
+
+        <!-- STRATEGY -->
+        <div class="case-pane" id="case-strategy">
+          <h3>Decisão Estratégica</h3>
+          <div class="case-context">DOMÍNIO: ESTRATÉGIA EMPRESARIAL · M&A · EXPANSÃO · POSICIONAMENTO</div>
+          <p class="case-desc">
+            Análise de decisões estratégicas de alta complexidade que requerem integrar sinais de mercado 
+            e dados competitivos (o que o ambiente empiricamente indica), consistência com a tese estratégica 
+            e capacidades da organização (coerência normativa), e viabilidade de execução real dada a cultura 
+            e recursos disponíveis (adequação pragmática).
+          </p>
+          <div class="case-agents">
+            <div class="ca-row ca-stat">
+              <div class="ca-num">A·1</div>
+              <div class="ca-name">Analista de Ambiente<br>(Inteligência Competitiva)</div>
+              <div class="ca-desc">
+                Mapeia o ambiente externo com dados: movimentos de concorrentes, tendências de mercado, sinais de disrupção, dados de crescimento de segmentos, comportamento de consumidores e precedentes de decisões similares em outros contextos. Entrega o retrato probabilístico do ambiente estratégico.
+              </div>
+              <span class="ca-truth-tag tag-stat">VERDADE PROB.</span>
+            </div>
+            <div class="ca-row ca-logic">
+              <div class="ca-num">A·2</div>
+              <div class="ca-name">Auditor de Consistência<br>(Tese Estratégica)</div>
+              <div class="ca-desc">
+                Verifica se a decisão proposta é coerente com a tese estratégica da organização, com suas capacidades distintivas e com os constraints de governança. Uma decisão pode ser atrativa externamente mas incoerente com o que a organização é e o que pode sustentar estruturalmente.
+              </div>
+              <span class="ca-truth-tag tag-logic">VERDADE LÓGICA</span>
+            </div>
+            <div class="ca-row ca-prag">
+              <div class="ca-num">A·3</div>
+              <div class="ca-name">Analista de Execução<br>(Change & Culture)</div>
+              <div class="ca-desc">
+                Avalia viabilidade de implementação real: capacidade de change management, resistências culturais antecipadas, gargalos de talent, dependências de timing e riscos de execução. A decisão mais coerente estrategicamente pode ser inviável dado o estado atual da organização.
+              </div>
+              <span class="ca-truth-tag tag-prag">VERDADE PRAG.</span>
+            </div>
+            <div class="ca-row ca-pivot">
+              <div class="ca-num">A·4</div>
+              <div class="ca-name">Orquestrador Decisório<br>(Síntese Executiva)</div>
+              <div class="ca-desc">
+                Integra os três outputs num parecer decisório com trade-offs explícitos. Se A·3 rejeita viabilidade de execução: propõe sequenciamento alternativo, build de capacidades prévio ou escopo reduzido. Se A·2 detecta incoerência estratégica: questiona se a decisão requer revisão da própria tese estratégica.
+              </div>
+              <span class="ca-truth-tag tag-pivot">ORCHESTRATOR</span>
+            </div>
+          </div>
+          <div class="pivot-box">
+            <div class="pb-label">⚡ TENSÃO CENTRAL E PIVOTAGEM</div>
+            <p>
+              A tensão mais comum em decisões estratégicas: a oportunidade de mercado é real (A·1 valida), a consistência estratégica existe (A·2 valida), mas a capacidade de execução não está presente ainda (A·3 rejeita). O pivô clássico: decisão de duas fases — construir a capacidade primeiro, executar depois — ou decisão de parceria para acessar a capacidade externamente.
+            </p>
+          </div>
+        </div>
+
+        <!-- CREATIVE -->
+        <div class="case-pane" id="case-creative">
+          <h3>Produção Criativa Complexa</h3>
+          <div class="case-context">DOMÍNIO: ESCRITA · DESIGN NARRATIVO · CRIAÇÃO DE CONTEÚDO · WORLDBUILDING</div>
+          <p class="case-desc">
+            Desenvolvimento de obras criativas que precisam ser simultaneamente originais e ressonantes 
+            (o que o corpus cultural indica que funciona), internamente coerentes e formalmente sólidas 
+            (consistência narrativa, estrutural e temática), e eficazes com o público real pretendido 
+            (engajamento e impacto concreto).
+          </p>
+          <div class="case-agents">
+            <div class="ca-row ca-stat">
+              <div class="ca-num">A·1</div>
+              <div class="ca-name">Analista Cultural<br>(Corpus & Ressonância)</div>
+              <div class="ca-desc">
+                Mapeia o corpus cultural relevante: obras de referência no gênero, arquétipos que ressoam, temas com tração histórica comprovada, padrões de estrutura narrativa bem-sucedidos e tendências emergentes. Identifica o espaço de possibilidades com evidência de ressonância humana real.
+              </div>
+              <span class="ca-truth-tag tag-stat">VERDADE PROB.</span>
+            </div>
+            <div class="ca-row ca-logic">
+              <div class="ca-num">A·2</div>
+              <div class="ca-name">Crítico Estrutural<br>(Coerência Interna)</div>
+              <div class="ca-desc">
+                Verifica a coerência interna da obra: consistência de personagens, coerência do worldbuilding, validade da estrutura dramática, coesão temática e ausência de contradições internas. Uma obra pode ter elementos ressonantes mas que não formam um todo coerente — o A·2 detecta essas fraturas.
+              </div>
+              <span class="ca-truth-tag tag-logic">VERDADE LÓGICA</span>
+            </div>
+            <div class="ca-row ca-prag">
+              <div class="ca-num">A·3</div>
+              <div class="ca-name">Leitor Adversarial<br>(Recepção Real)</div>
+              <div class="ca-desc">
+                Simula a recepção do leitor/espectador real: onde o interesse vai cair? Onde a suspensão de descrença vai quebrar? O que vai parecer derivativo versus genuinamente original? Onde a obra vai perder o público específico para o qual foi criada? Testa eficácia real, não intenção.
+              </div>
+              <span class="ca-truth-tag tag-prag">VERDADE PRAG.</span>
+            </div>
+            <div class="ca-row ca-pivot">
+              <div class="ca-num">A·4</div>
+              <div class="ca-name">Editor Orquestrador<br>(Síntese Criativa)</div>
+              <div class="ca-desc">
+                Integra os três diagnósticos. Quando A·3 detecta perda de público: propõe revisões de ritmo, reposicionamento de ênfase ou reformulação de elementos sem comprometer a coerência do A·2. Quando A·1 sugere elementos que A·2 rejeita por incoerência: encontra a forma de incorporar o potencial ressonante dentro das regras internas da obra.
+              </div>
+              <span class="ca-truth-tag tag-pivot">ORCHESTRATOR</span>
+            </div>
+          </div>
+          <div class="pivot-box">
+            <div class="pb-label">⚡ TENSÃO CENTRAL E PIVOTAGEM</div>
+            <p>
+              A tensão criativa fundamental: o que é mais original (A·1 indica espaço inexplorado) frequentemente viola convenções que o público precisa para se orientar (A·3 rejeita), enquanto o que é mais coerente internamente (A·2 valida) pode ser previsível. O A·4 busca a interseção entre originalidade, coerência e engajamento — o espaço onde grandes obras habitam.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ARQUITETURA GENÉRICA ══════════════════════════════════ -->
+<div class="z1" style="background:var(--bg);">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-eyebrow">Estrutura Universal</div>
+        <h2>Anatomia da Config Agêntica</h2>
+        <p>Os componentes invariantes de qualquer sistema agêntico sob o Método Coragem™</p>
+      </div>
+
+      <div class="agents-grid">
+        <div class="agent-card">
+          <div class="ac-header">
+            <div class="ac-num">A·P</div>
+            <div class="ac-title">
+              <h4>Agente Probabilístico</h4>
+              <div class="ac-role">Data Miner · Empiricista · Crawler</div>
+            </div>
+            <div class="ac-truth-badges">
+              <div class="ac-truth-dot" style="background:var(--truth-stat)"></div>
+            </div>
+          </div>
+          <div class="ac-body">
+            <p>
+              Opera exclusivamente sobre dados, evidências, frequências e probabilidades. 
+              Não faz julgamentos normativos. Sua função é mapear exaustivamente 
+              o que o mundo <em>provavelmente é</em> com base nas evidências disponíveis.
+            </p>
+            <div class="ac-output">Distribuição de probabilidades sobre hipóteses</div>
+            <div class="ac-feeds">
+              <span class="feed-target">A·LÓGICO</span>
+              <span class="feed-target">ORCH</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="agent-card">
+          <div class="ac-header">
+            <div class="ac-num">A·L</div>
+            <div class="ac-title">
+              <h4>Agente Lógico</h4>
+              <div class="ac-role">Normativo · Validador · Hermeneuta</div>
+            </div>
+            <div class="ac-truth-badges">
+              <div class="ac-truth-dot" style="background:var(--truth-logic)"></div>
+            </div>
+          </div>
+          <div class="ac-body">
+            <p>
+              Opera sobre o sistema de regras, leis, constraints e frameworks formais em vigor. 
+              Recebe o output do Agente Probabilístico e verifica consistência. 
+              Identifica e sinaliza contradições com o sistema normativo.
+            </p>
+            <div class="ac-output">Mapa de contradições e viabilidade normativa</div>
+            <div class="ac-feeds">
+              <span class="feed-target">A·PRAG</span>
+              <span class="feed-target">ORCH</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="agent-card">
+          <div class="ac-header">
+            <div class="ac-num">A·Π</div>
+            <div class="ac-title">
+              <h4>Agente Pragmático</h4>
+              <div class="ac-role">Real-World Tester · Viabilidade · Cultura</div>
+            </div>
+            <div class="ac-truth-badges">
+              <div class="ac-truth-dot" style="background:var(--truth-prag)"></div>
+            </div>
+          </div>
+          <div class="ac-body">
+            <p>
+              Testa a síntese (Estatístico + Lógico) contra as fricções do mundo real: 
+              comportamento humano, cultura, limitações operacionais, viabilidade econômica. 
+              Retorna viabilidade com ajustes necessários.
+            </p>
+            <div class="ac-output">Score de viabilidade + fricções identificadas</div>
+            <div class="ac-feeds">
+              <span class="feed-target">ORCH</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="agent-card">
+          <div class="ac-header">
+            <div class="ac-num" style="background:var(--amber-dim);border-color:rgba(232,168,50,0.3);color:var(--amber2);">Ω</div>
+            <div class="ac-title">
+              <h4>Orquestrador / Pivot Master</h4>
+              <div class="ac-role">Síntese · Pivotagem · Convergência</div>
+            </div>
+            <div class="ac-truth-badges">
+              <div class="ac-truth-dot" style="background:var(--amber)"></div>
+            </div>
+          </div>
+          <div class="ac-body">
+            <p>
+              O único agente que vê os outputs de todos os demais simultaneamente. 
+              Decide: convergir (síntese final) ou pivotar (reinjetar com parâmetros corrigidos). 
+              Documenta cada iteração. É o responsável pela inteligência sistêmica emergente.
+            </p>
+            <div class="ac-output">Síntese final OU novo vetor de pivotagem</div>
+            <div class="ac-feeds">
+              <span class="feed-target">TODOS OS AGENTES</span>
+              <span class="feed-target">USUÁRIO</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="orchestrator-block">
+        <div class="ob-grid">
+          <div class="ob-col">
+            <h5>Responsabilidades do Orquestrador</h5>
+            <ul>
+              <li>Detectar contradição entre as três verdades</li>
+              <li>Classificar: contradição resolvível vs. paradoxo produtivo</li>
+              <li>Formular o novo vetor de pivotagem com especificidade</li>
+              <li>Definir o agente que recebe a reinjeção</li>
+              <li>Manter registro de iterações e hipóteses descartadas</li>
+              <li>Declarar convergência epistêmica quando atingida</li>
+            </ul>
+          </div>
+          <div class="ob-col">
+            <h5>Condições de Pivotagem</h5>
+            <ul>
+              <li>A·LÓGICO identifica violação de constraint crítico</li>
+              <li>A·PRAG retorna viabilidade abaixo do threshold</li>
+              <li>A·PROB encontra dados que contradizem hipótese base</li>
+              <li>Contradição entre dois ou mais agentes sem síntese possível</li>
+              <li>Output final viola Warnings definidos nas camadas anteriores</li>
+              <li>Usuário injeta nova informação que invalida ciclo anterior</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONCLUSÃO ═════════════════════════════════════════════ -->
+<section class="conclusion z1">
+  <div class="container">
+    <div class="section-header" style="text-align:center;">
+      <div class="section-eyebrow">Síntese Paradigmática</div>
+      <h2>A Nona Camada</h2>
+      <p style="margin: 0 auto;">Quando a cognição singular não é suficiente — e o sistema precisa pensar contra si mesmo</p>
+    </div>
+
+    <div class="prose" style="max-width:720px; margin: 0 auto 40px;">
+      <p>
+        A Config Agêntica não é uma extensão do Método Coragem™ — é sua <strong>consequência lógica</strong>. 
+        Se as oito camadas anteriores são a arquitetura do pensamento individual de alta qualidade, 
+        a nona camada é a arquitetura do pensamento coletivo orquestrado — 
+        onde diferentes epistemologias especializadas são postas em tensão deliberada 
+        para produzir sínteses que nenhuma delas poderia gerar sozinha.
+      </p>
+      <p>
+        O insight central é contraintuitivo: a <span class="ht">contradição entre agentes</span> não é falha do sistema — 
+        é seu mecanismo mais poderoso. É precisamente quando o Agente Estatístico e o Agente Lógico discordam 
+        que o Orquestrador encontra o espaço onde a solução genuinamente nova reside. 
+        A retroalimentação não corrige erros — ela gera inteligência que o sistema não poderia 
+        ter produzido em iteração linear.
+      </p>
+    </div>
+
+    <div class="paradigm-block">
+      <div class="pb-from">
+        <div class="pb-label">PROMPT TRADICIONAL</div>
+        <p>Um modelo, uma inferência, uma resposta — comprimindo as três verdades numa síntese ambígua e não-verificável</p>
+      </div>
+      <div class="pb-arrow">→</div>
+      <div class="pb-to">
+        <div class="pb-label">CONFIG AGÊNTICA</div>
+        <p>Múltiplos agentes especializados, cada um guardião de uma verdade, com retroalimentação que transforma contradição em inteligência emergente</p>
+      </div>
+    </div>
+
+    <div class="closing-quote">
+      <blockquote>
+        "O sistema que aprende com suas próprias contradições é epistemicamente superior 
+        ao sistema que as evita. A retroalimentação agêntica não é debugging — é a arquitetura 
+        pela qual verdades incompatíveis geram sínteses impossíveis de prever."
+      </blockquote>
+      <cite>— Luiz Guilherme Coragem · Config Agêntica™ · Método Coragem™ Camada 9</cite>
+    </div>
+  </div>
+</section>
+
+<footer class="z1">
+  <span>Config Agêntica™</span> · Camada 9 · Método Coragem™ · Projeto Pessoal Independente<br>
+  Idealizador: <span>Luiz Guilherme Coragem</span> · 2025<br>
+  <em style="opacity:0.4;">Quando aplicável a IAs com Agentes · Retroalimentação + Três Verdades + Orquestração</em>
+</footer>
+
+<script>
+  function showCase(id) {
+    document.querySelectorAll('.case-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.case-tab').forEach(t => t.classList.remove('active'));
+    const pane = document.getElementById('case-' + id);
+    if (pane) pane.classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+</body>
+</html>
